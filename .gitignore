@@ -65,3 +65,5 @@ buck-out/
 
 coverage
 tmp
+
+android/app/google-services.json

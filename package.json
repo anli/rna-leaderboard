@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "reset": "watchman watch-del-all && npm start --reset-cache",
     "ci:pr": "npm ci && npm run lint && npm run test",
     "ci:tag": "npm ci && npm run e2e:ci",
     "e2e:ci": "detox build -c android.emu.release && detox test -c android.emu.release",
@@ -14,6 +15,9 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "@react-native-firebase/app": "^6.3.4",
+    "@react-native-firebase/auth": "^6.3.4",
+    "@react-native-firebase/firestore": "^6.3.4",
     "react": "16.9.0",
     "react-native": "0.61.5"
   },
@@ -34,10 +38,14 @@
     "jest": "^24.9.0",
     "metro-react-native-babel-preset": "^0.56.0",
     "prettier": "^1.19.1",
+    "react-native-testing-library": "^1.13.0",
     "react-test-renderer": "16.9.0",
     "typescript": "^3.7.3"
   },
   "jest": {
+    "transformIgnorePatterns": [
+      "node_modules/(?!(jest-)?react-native|@?react-navigation|@?react-native-community)"
+    ],
     "coverageThreshold": {
       "global": {
         "branches": 100,

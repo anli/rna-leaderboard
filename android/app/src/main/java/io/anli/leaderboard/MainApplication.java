@@ -1,4 +1,4 @@
-package com.leaderboard;
+package io.anli.leaderboard;
 
 import android.app.Application;
 import android.content.Context;

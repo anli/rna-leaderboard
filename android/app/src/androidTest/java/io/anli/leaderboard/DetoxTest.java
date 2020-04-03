@@ -1,5 +1,5 @@
 // Replace this with your app's package
-package com.leaderboard;
+package io.anli.leaderboard;
 
 import com.wix.detox.Detox;
 
