@@ -1,9 +1,6 @@
 import {GetByAPI} from 'react-native-testing-library';
 
-const IShouldSeePlayList = (
-  getByText: GetByAPI['getByText'],
-  expect: jest.Expect,
-) => {
+const IShouldSeePlayList = (getByText: GetByAPI['getByText']) => {
   expect(getByText('TITLE_A')).toBeDefined();
   expect(getByText('WINNER_A')).toBeDefined();
   expect(getByText('2020-04-01')).toBeDefined();

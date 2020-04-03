@@ -9,7 +9,5 @@ import {render} from 'react-native-testing-library';
 import App from '../App';
 
 it('Given data, When I open App, Then I should see plays list', async () => {
-  const {getByText} = render(<App />);
-
-  Play.IShouldSeePlayList(getByText, expect);
+  Play.IShouldSeePlayList(render(<App />).getByText);
 });
