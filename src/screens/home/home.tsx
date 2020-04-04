@@ -1,13 +1,21 @@
 import firestore from '@react-native-firebase/firestore';
+import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {Text, View} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const HomeScreen = () => {
-  const {data} = useApp();
+  const {data} = useHomeScreen();
+
+  const {navigate} = useNavigation();
+
+  const onCreate = () => {
+    navigate('PlayCreateScreen');
+  };
 
   return (
     <>
-      <View>
+      <View testID="home-screen">
         <Text>Test</Text>
         {data?.map(({id, title, winner, date, participants}) => (
           <View key={id}>
@@ -19,6 +27,9 @@ const HomeScreen = () => {
             ))}
           </View>
         ))}
+        <TouchableOpacity testID="play-create-button" onPress={onCreate}>
+          <Text>Button</Text>
+        </TouchableOpacity>
       </View>
     </>
   );
@@ -34,7 +45,7 @@ interface Play {
   participants: string[];
 }
 
-const useApp = () => {
+const useHomeScreen = () => {
   const [data, setData] = useState<Play[] | undefined>(undefined);
 
   useEffect(() => {
