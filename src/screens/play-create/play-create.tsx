@@ -10,13 +10,32 @@ const PlayCreateScreen = () => {
   const {goBack} = useNavigation();
 
   const onSave$ = async () => {
-    console.log({values});
     await create$(values);
     goBack();
   };
 
   return (
     <View testID="play-create-screen">
+      <Form values={values} onChangeText={onChangeText} />
+
+      <TouchableOpacity testID="play-create-button" onPress={onSave$}>
+        <Text>Save</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+export default PlayCreateScreen;
+
+const Form = ({
+  values,
+  onChangeText,
+}: {
+  values: FormValues;
+  onChangeText: (key: string, value: string, arrayProp?: 'participants') => any;
+}) => {
+  return (
+    <>
       <TextInput
         placeholder="Title"
         testID="title-input"
@@ -47,28 +66,25 @@ const PlayCreateScreen = () => {
         onChangeText={data => onChangeText('1', data, 'participants')}
         value={values.participants[1]}
       />
-
-      <TouchableOpacity testID="play-create-button" onPress={onSave$}>
-        <Text>Save</Text>
-      </TouchableOpacity>
-    </View>
+    </>
   );
 };
 
-export default PlayCreateScreen;
+interface FormValues {
+  title: string;
+  winner: string;
+  date: string;
+  participants: string[];
+}
 
+const INITIAL_FORM_VALUES = {
+  title: '',
+  winner: '',
+  date: '',
+  participants: [],
+};
 const usePlayCreateScreen = () => {
-  const [values, setValues] = useState<{
-    title: string;
-    winner: string;
-    date: string;
-    participants: string[];
-  }>({
-    title: '',
-    winner: '',
-    date: '',
-    participants: [],
-  });
+  const [values, setValues] = useState<FormValues>(INITIAL_FORM_VALUES);
 
   const onChangeText = (
     key: string,
@@ -85,12 +101,7 @@ const usePlayCreateScreen = () => {
     return setValues({...values, participants});
   };
 
-  const create$ = async (data: {
-    title: string;
-    winner: string;
-    date: string;
-    participants: string[];
-  }) => {
+  const create$ = async (data: FormValues) => {
     await firestore()
       .collection('plays')
       .add(data);

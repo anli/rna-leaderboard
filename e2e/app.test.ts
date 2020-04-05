@@ -1,31 +1,15 @@
-import {firestore} from '@react-native-firebase/firestore';
 import {by, device, element, expect, waitFor} from 'detox';
 
 describe('App', () => {
   beforeEach(async () => {
     await device.reloadReactNative();
-
-    const data = await firestore()
-      .collection('plays')
-      .get();
-
-    data.docs.forEach(value => {
-      console.log({id: value.id});
-    });
   });
 
   it('Given any, When I open App, Then I should see plays list', async () => {
     const homeScreenId = by.id('home-screen');
-    const title = element(by.text('E2E_PLAY_TITLE_A'));
-    await waitFor(title)
-      .toHaveText('E2E_PLAY_TITLE_A')
+    await waitFor(element(homeScreenId))
+      .toBeVisible()
       .withTimeout(10000);
-    await expect(title).toBeVisible();
-
-    await expect(element(by.text('E2E_PLAY_WINNER_A'))).toBeVisible();
-    await expect(element(by.text('2020-04-01'))).toBeVisible();
-    await expect(element(by.text('E2E_PLAY_PARTICIPANT_A'))).toBeVisible();
-    await expect(element(by.text('E2E_PLAY_PARTICIPANT_B'))).toBeVisible();
     await element(by.id('play-create-button').withAncestor(homeScreenId)).tap();
 
     const playCreateScreenId = by.id('play-create-screen');
