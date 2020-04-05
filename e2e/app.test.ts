@@ -53,5 +53,30 @@ describe('App', () => {
     await expect(
       element(by.text('E2E_NEW_PARTICIPANT_2').withAncestor(homeScreenId)),
     ).toBeVisible();
+
+    await element(by.text('E2E_NEW_TITLE').withAncestor(homeScreenId)).tap();
+    const playDetailScreenId = by.id('play-detail-screen');
+    await waitFor(element(playDetailScreenId))
+      .toBeVisible()
+      .withTimeout(10000);
+    await expect(
+      element(by.text('E2E_NEW_TITLE').withAncestor(playDetailScreenId)),
+    ).toBeVisible();
+    await expect(
+      element(by.text('E2E_NEW_WINNER').withAncestor(playDetailScreenId)),
+    ).toBeVisible();
+    await expect(
+      element(by.text('2020-01-01').withAncestor(playDetailScreenId)),
+    ).toBeVisible();
+    await expect(
+      element(
+        by.text('E2E_NEW_PARTICIPANT_1').withAncestor(playDetailScreenId),
+      ),
+    ).toBeVisible();
+    await expect(
+      element(
+        by.text('E2E_NEW_PARTICIPANT_2').withAncestor(playDetailScreenId),
+      ),
+    ).toBeVisible();
   });
 });

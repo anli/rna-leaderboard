@@ -13,18 +13,24 @@ const HomeScreen = () => {
     navigate('PlayCreateScreen');
   };
 
+  const onDetail = (id: string) => {
+    navigate('PlayDetailScreen', {id});
+  };
+
   return (
     <>
       <View testID="home-screen">
         <Text>Test</Text>
         {data?.map(({id, title, winner, date, participants}) => (
           <View key={id}>
-            <Text>{title}</Text>
-            <Text>{winner}</Text>
-            <Text>{date}</Text>
-            {participants?.map(participant => (
-              <Text key={participant}>{participant}</Text>
-            ))}
+            <TouchableOpacity onPress={() => onDetail(id)}>
+              <Text>{title}</Text>
+              <Text>{winner}</Text>
+              <Text>{date}</Text>
+              {participants?.map(participant => (
+                <Text key={participant}>{participant}</Text>
+              ))}
+            </TouchableOpacity>
           </View>
         ))}
         <TouchableOpacity testID="play-create-button" onPress={onCreate}>
