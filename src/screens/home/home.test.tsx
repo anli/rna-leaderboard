@@ -26,10 +26,7 @@ describe('Home Screen', () => {
 
   it('Given data, And I am at "Home Screen", When I press the "Play Title", Then I should see "Play Detail Screen', async () => {
     const {getByText} = render(<HomeScreen />);
-    const play = {
-      ...ReactNativeFirebase.Firestore.PLAYS[0].data(),
-      id: ReactNativeFirebase.Firestore.PLAYS[0].id,
-    };
+    const play = ReactNativeFirebase.Firestore.PLAYS[0];
 
     fireEvent.press(getByText(play.title));
     expect(ReactNavigation.Native.mockNavigate).toBeCalledTimes(1);

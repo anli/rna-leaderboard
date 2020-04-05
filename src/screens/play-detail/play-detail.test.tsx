@@ -3,10 +3,7 @@ import React from 'react';
 import {render} from 'react-native-testing-library';
 import PlayDetailScreen from './play-detail';
 
-const play = {
-  ...ReactNativeFirebase.Firestore.PLAYS[0].data(),
-  id: ReactNativeFirebase.Firestore.PLAYS[0].id,
-};
+const play = ReactNativeFirebase.Firestore.PLAYS[0];
 
 describe('Play Detail Screen', () => {
   beforeEach(() => {
@@ -15,12 +12,6 @@ describe('Play Detail Screen', () => {
     ReactNavigation.Native.mockUseRoute.mockImplementation(() => {
       return {params: {id: play.id}};
     });
-    ReactNativeFirebase.Firestore.mockDoc.mockImplementation(() => ({
-      onSnapshot: (callback: any) => {
-        callback(ReactNativeFirebase.Firestore.PLAYS[0]);
-        return () => jest.fn();
-      },
-    }));
   });
 
   it('Given id, And data, When I am at "Play Detail Screen", Then I should see data', () => {
