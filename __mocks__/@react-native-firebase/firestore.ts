@@ -1,3 +1,5 @@
+const mockAdd = jest.fn(() => Promise.resolve(true));
+
 const firestore = () => ({
   collection: () => ({
     onSnapshot: (callback: any) => {
@@ -25,7 +27,12 @@ const firestore = () => ({
       });
       return () => jest.fn();
     },
+    add: mockAdd,
   }),
 });
 
 export default firestore;
+
+export class Firestore {
+  static mockAdd = mockAdd;
+}
