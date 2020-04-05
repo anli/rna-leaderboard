@@ -1,8 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
 import React, {useState} from 'react';
-import {Text, TextInput, View} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {Text, TextInput, TouchableOpacity, View} from 'react-native';
 
 const PlayCreateScreen = () => {
   const {values, onChangeText, create$} = usePlayCreateScreen();
