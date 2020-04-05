@@ -54,17 +54,15 @@ const Form = ({
         onChangeText={data => onChangeText('date', data)}
         value={values.date}
       />
-      <TextInput
-        placeholder="Participants A"
-        testID="participants-0-input"
-        onChangeText={data => onChangeText('0', data, 'participants')}
-        value={values.participants[0]}
+      <ParticipantTextInput
+        index="0"
+        onChangeText={onChangeText}
+        values={values}
       />
-      <TextInput
-        placeholder="Participants B"
-        testID="participants-1-input"
-        onChangeText={data => onChangeText('1', data, 'participants')}
-        value={values.participants[1]}
+      <ParticipantTextInput
+        index="1"
+        onChangeText={onChangeText}
+        values={values}
       />
     </>
   );
@@ -86,7 +84,7 @@ const INITIAL_FORM_VALUES = {
 const usePlayCreateScreen = () => {
   const [values, setValues] = useState<FormValues>(INITIAL_FORM_VALUES);
 
-  const onChangeText = (
+  const onChangeText: onChangeTextProps = (
     key: string,
     value: string,
     arrayProp?: 'participants',
@@ -109,3 +107,28 @@ const usePlayCreateScreen = () => {
 
   return {values, onChangeText, create$};
 };
+
+const ParticipantTextInput = ({
+  index,
+  onChangeText,
+  values,
+}: {
+  index: string;
+  onChangeText: onChangeTextProps;
+  values: FormValues;
+}) => {
+  return (
+    <TextInput
+      placeholder="Participant"
+      testID={`participants-${index}-input`}
+      onChangeText={data => onChangeText(index, data, 'participants')}
+      value={values.participants[Number(index)]}
+    />
+  );
+};
+
+type onChangeTextProps = (
+  key: string,
+  value: string,
+  arrayProp?: 'participants',
+) => any;
