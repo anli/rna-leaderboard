@@ -1,8 +1,8 @@
+import {Play} from '@models';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
-import {Text, View} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {Text, TouchableOpacity, View} from 'react-native';
 
 const HomeScreen = () => {
   const {data} = useHomeScreen();
@@ -23,7 +23,9 @@ const HomeScreen = () => {
         <Text>Test</Text>
         {data?.map(({id, title, winner, date, participants}) => (
           <View key={id}>
-            <TouchableOpacity onPress={() => onDetail(id)}>
+            <TouchableOpacity
+              testID="play-detail-button"
+              onPress={() => onDetail(id)}>
               <Text>{title}</Text>
               <Text>{winner}</Text>
               <Text>{date}</Text>
@@ -42,14 +44,6 @@ const HomeScreen = () => {
 };
 
 export default HomeScreen;
-
-interface Play {
-  id: string;
-  title: string;
-  winner: string;
-  date: string;
-  participants: string[];
-}
 
 const useHomeScreen = () => {
   const [data, setData] = useState<Play[] | undefined>(undefined);

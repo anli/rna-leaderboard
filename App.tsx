@@ -1,6 +1,6 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {HomeScreen, PlayCreateScreen} from '@screens';
+import {HomeScreen, PlayCreateScreen, PlayDetailScreen} from '@screens';
 import React from 'react';
 import 'react-native-gesture-handler';
 
@@ -16,6 +16,7 @@ const App = () => {
           options={{headerShown: false}}
         />
         <Stack.Screen name="PlayCreateScreen" component={PlayCreateScreen} />
+        <Stack.Screen name="PlayDetailScreen" component={PlayDetailScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

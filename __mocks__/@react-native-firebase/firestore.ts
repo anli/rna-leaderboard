@@ -19,6 +19,7 @@ const PLAYS = [
     }),
   },
 ];
+const mockDoc = jest.fn();
 
 const firestore = () => ({
   collection: () => ({
@@ -30,6 +31,7 @@ const firestore = () => ({
     },
     add: mockAdd,
   }),
+  doc: mockDoc,
 });
 
 export default firestore;
@@ -37,4 +39,5 @@ export default firestore;
 export class Firestore {
   static mockAdd = mockAdd;
   static PLAYS = PLAYS;
+  static mockDoc = mockDoc;
 }
