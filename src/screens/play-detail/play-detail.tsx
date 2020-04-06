@@ -1,22 +1,47 @@
 import {Play} from '@models';
 import firestore from '@react-native-firebase/firestore';
-import {useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
-import {Text, View} from 'react-native';
+import {Alert, Text, View} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const PlayDetailScreen = () => {
   const route = useRoute<any>();
 
-  const {data} = usePlayDetailScreen(route?.params?.id);
+  const {data, delete$} = usePlayDetailScreen(route?.params?.id);
+
+  const {goBack} = useNavigation();
+
+  const onDelete = () => {
+    Alert.alert('Confirm Delete', undefined, [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Confirm',
+        onPress: onDeleteConfirm$,
+      },
+    ]);
+  };
+
+  const onDeleteConfirm$ = async () => {
+    await delete$();
+    /* istanbul ignore next */
+    goBack();
+  };
 
   return (
     <View testID="play-detail-screen">
       <Text>{data?.title}</Text>
       <Text>{data?.winner}</Text>
       <Text>{data?.date}</Text>
-      {data?.participants.map(participant => (
+      {data?.participants.map((participant: string) => (
         <Text key={participant}>{participant}</Text>
       ))}
+      <TouchableOpacity testID="play-delete-button" onPress={onDelete}>
+        <Text>Delete</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -25,6 +50,12 @@ export default PlayDetailScreen;
 
 const usePlayDetailScreen = (id: string) => {
   const [data, setData] = useState<Play | undefined>(undefined);
+
+  const delete$ = async () => {
+    return firestore()
+      .doc(`plays/${id}`)
+      .delete();
+  };
 
   useEffect(() => {
     const unsubscribe = firestore()
@@ -45,5 +76,5 @@ const usePlayDetailScreen = (id: string) => {
     return () => unsubscribe();
   }, [id]);
 
-  return {data};
+  return {data, delete$};
 };
