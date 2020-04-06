@@ -1,5 +1,6 @@
 const mockAdd = jest.fn(() => Promise.resolve(true));
 const mockDelete = jest.fn(() => Promise.resolve(true));
+const mockUpdate = jest.fn(() => Promise.resolve(true));
 
 const PLAYS = [
   {
@@ -41,6 +42,7 @@ const firestore = () => ({
     const play = PLAYS.find(({id}) => id === path.split('/')[1]);
 
     return {
+      update: mockUpdate,
       delete: mockDelete,
       onSnapshot: (callback: any) => {
         callback({
@@ -59,4 +61,5 @@ export class Firestore {
   static mockAdd = mockAdd;
   static PLAYS = PLAYS;
   static mockDelete = mockDelete;
+  static mockUpdate = mockUpdate;
 }

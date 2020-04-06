@@ -39,4 +39,14 @@ describe('Play Detail Screen', () => {
 
     expect(ReactNativeFirebase.Firestore.mockDelete).toBeCalledTimes(1);
   });
+
+  it('Given I am at "Play Detail Screen", When I press "Update Button", Then I should see "Play Update Screen"', () => {
+    const {getByTestId} = render(<PlayDetailScreen />);
+    fireEvent.press(getByTestId('play-update-button'));
+
+    expect(ReactNavigation.Native.mockNavigate).toBeCalledTimes(1);
+    expect(
+      ReactNavigation.Native.mockNavigate,
+    ).toBeCalledWith('PlayUpdateScreen', {id: play.id, data: play});
+  });
 });
