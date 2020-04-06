@@ -40,7 +40,7 @@
     "moduleResolution": "node" /* Specify module resolution strategy: 'node' (Node.js) or 'classic' (TypeScript pre-1.6). */,
     "baseUrl": "./" /* Base directory to resolve non-absolute module names. */,
     "paths": {
-      "@models": ["./src/models"]
+      "@models": ["./src/models"],
       "@mocks": ["./__mocks__"],
       "@tests/models": ["./src/tests/models"],
       "@screens": ["./src/screens"]

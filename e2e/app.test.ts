@@ -1,4 +1,5 @@
 import {by, device, element, expect, waitFor} from 'detox';
+import {HomeScreen, PlayDetailScreen} from './models';
 
 describe('App', () => {
   beforeEach(async () => {
@@ -57,15 +58,9 @@ describe('App', () => {
   });
 
   it('Given data and I am at "Home Screen", When I press "Play", Then I am at "Play Detail Screen", and I should see data', async () => {
-    await waitFor(element(by.id('play-detail-button')))
-      .toBeVisible()
-      .withTimeout(10000);
-    await element(by.id('play-detail-button')).tap();
+    await HomeScreen.iAmAtPlayDetailScreen$();
 
     const playDetailScreenId = by.id('play-detail-screen');
-    await waitFor(element(playDetailScreenId))
-      .toBeVisible()
-      .withTimeout(10000);
     await expect(
       element(by.text('E2E_NEW_TITLE').withAncestor(playDetailScreenId)),
     ).toBeVisible();
@@ -85,5 +80,13 @@ describe('App', () => {
         by.text('E2E_NEW_PARTICIPANT_2').withAncestor(playDetailScreenId),
       ),
     ).toBeVisible();
+  });
+
+  it('Given I am at "Play Detail Screen" with data Play, When I press "Delete Button", And I press "Confirm Button", Then I am at "Home Screen", and I should not see data', async () => {
+    await HomeScreen.iAmAtPlayDetailScreen$();
+    await PlayDetailScreen.iPressDeleteButton$();
+    await PlayDetailScreen.iPressDeleteConfirmButton$();
+    await HomeScreen.iAmAtHomeScreen$();
+    await HomeScreen.iShouldNotSeeData$('E2E_NEW_TITLE');
   });
 });

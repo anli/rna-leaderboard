@@ -21,15 +21,15 @@ const HomeScreen = () => {
     <>
       <View testID="home-screen">
         <Text>Test</Text>
-        {data?.map(({id, title, winner, date, participants}) => (
+        {data?.map(({id, title, winner, date, participants}, index) => (
           <View key={id}>
             <TouchableOpacity
-              testID="play-detail-button"
+              testID={`play-detail-button-${index}`}
               onPress={() => onDetail(id)}>
               <Text>{title}</Text>
               <Text>{winner}</Text>
               <Text>{date}</Text>
-              {participants?.map(participant => (
+              {participants?.map((participant: string) => (
                 <Text key={participant}>{participant}</Text>
               ))}
             </TouchableOpacity>
