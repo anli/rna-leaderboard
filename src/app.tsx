@@ -7,6 +7,7 @@ import {
   PlayCreateScreen,
   PlayDetailScreen,
   PlayUpdateScreen,
+  RegisterScreen,
 } from '@screens';
 import React, {useEffect, useState} from 'react';
 import 'react-native-gesture-handler';
@@ -33,6 +34,7 @@ const UnauthenticatedStacks = () => (
       component={LoginScreen}
       options={{headerShown: false}}
     />
+    <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
   </Stack.Navigator>
 );
 

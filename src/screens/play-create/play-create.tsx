@@ -1,4 +1,3 @@
-// import {PlayForm} from './../../components';
 import {PlayForm} from '@components';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
