@@ -6,7 +6,6 @@ import {Text, TouchableOpacity, View} from 'react-native';
 
 const HomeScreen = () => {
   const {data} = useHomeScreen();
-
   const {navigate} = useNavigation();
 
   const onCreate = () => {
