@@ -1,11 +1,11 @@
 import {UserForm} from '@components';
-import auth from '@react-native-firebase/auth';
 import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
+import {useUserForm} from '@utils';
+import React from 'react';
 import {Alert, Text, TouchableOpacity, View} from 'react-native';
 
 const LoginScreen = () => {
-  const {values, onChangeText, login$} = useLoginScreen();
+  const {values, onChangeText, login$} = useUserForm();
   const {navigate} = useNavigation();
 
   const onLogin = async () => {
@@ -39,36 +39,3 @@ const LoginScreen = () => {
 };
 
 export default LoginScreen;
-
-const INITIAL_FORM_VALUES = {
-  email: '',
-  password: '',
-};
-
-interface FormValues {
-  email: string;
-  password: string;
-}
-
-const useLoginScreen = () => {
-  const [values, setValues] = useState<FormValues>(INITIAL_FORM_VALUES);
-
-  const onChangeText: onChangeTextProps = (key: string, value: string) => {
-    return setValues({...values, [key]: value});
-  };
-
-  const login$ = async (email: string, password: string) => {
-    try {
-      await auth().signInWithEmailAndPassword(email, password);
-      return {
-        ok: true,
-      };
-    } catch (error) {
-      return {ok: false, error: error.message};
-    }
-  };
-
-  return {values, onChangeText, login$};
-};
-
-type onChangeTextProps = (key: string, value: string) => any;

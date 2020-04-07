@@ -1,11 +1,11 @@
 import {UserForm} from '@components';
-import auth from '@react-native-firebase/auth';
-import React, {useState} from 'react';
+import {useUserForm} from '@utils';
+import React from 'react';
 import {Alert, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const RegisterScreen = () => {
-  const {values, onChangeText, register$} = useRegisterScreen();
+  const {values, onChangeText, register$} = useUserForm();
 
   const onRegister = async () => {
     const result = await register$(values.email, values.password);
@@ -30,36 +30,3 @@ const RegisterScreen = () => {
 };
 
 export default RegisterScreen;
-
-const INITIAL_FORM_VALUES = {
-  email: '',
-  password: '',
-};
-
-interface FormValues {
-  email: string;
-  password: string;
-}
-
-const useRegisterScreen = () => {
-  const [values, setValues] = useState<FormValues>(INITIAL_FORM_VALUES);
-
-  const onChangeText: onChangeTextProps = (key: string, value: string) => {
-    return setValues({...values, [key]: value});
-  };
-
-  const register$ = async (email: string, password: string) => {
-    try {
-      await auth().createUserWithEmailAndPassword(email, password);
-      return {
-        ok: true,
-      };
-    } catch (error) {
-      return {ok: false, error: error.message};
-    }
-  };
-
-  return {values, onChangeText, register$};
-};
-
-type onChangeTextProps = (key: string, value: string) => any;
