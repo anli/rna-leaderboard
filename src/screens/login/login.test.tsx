@@ -2,6 +2,7 @@ import {ReactNativeFirebase} from '@mocks';
 import React from 'react';
 import {Alert} from 'react-native';
 import {fireEvent, render} from 'react-native-testing-library';
+import {mockNavigate} from '__mocks__/@react-navigation/native';
 import LoginScreen from './login';
 
 describe('Login Screen', () => {
@@ -34,5 +35,14 @@ describe('Login Screen', () => {
     await fireEvent.press(getByTestId('login-button'));
 
     expect(spy).toHaveBeenCalledTimes(0);
+  });
+
+  it('Given I am at "Login Screen", When I press "Register Button", Then I should see "Register Screen', async () => {
+    const {getByTestId} = render(<LoginScreen />);
+
+    await fireEvent.press(getByTestId('register-button'));
+
+    expect(mockNavigate).toBeCalledTimes(1);
+    expect(mockNavigate).toBeCalledWith('RegisterScreen');
   });
 });
