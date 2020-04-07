@@ -82,6 +82,37 @@ describe('App', () => {
     ).toBeVisible();
   });
 
+  it('Given I am at "Play Detail Screen" with data Play, And I press "Update Button", And I fill form with new data, When I press "Save Button", Then I am at "Home Screen", and I should see new data', async () => {
+    await iAmAtScreen$('home-screen');
+    await iPressButton$('play-detail-button-0', 'home-screen');
+
+    await iAmAtScreen$('play-detail-screen');
+    await iPressButton$('play-update-button', 'play-detail-screen');
+
+    await iAmAtScreen$('play-update-screen');
+    const data = {
+      'title-input': 'E2E_UPDATE_TITLE',
+      'winner-input': 'E2E_UPDATE_WINNER',
+      'date-input': '2020-05-05',
+      'participants-0-input': 'E2E_UPDATE_PARTICIPANT_1',
+      'participants-1-input': 'E2E_UPDATE_PARTICIPANT_2',
+    };
+    await iFillForm$(data, 'play-update-screen');
+    await iPressButton$('play-update-button', 'play-update-screen');
+
+    await iAmAtScreen$('home-screen');
+    await iShouldSeeData$(
+      [
+        'E2E_UPDATE_TITLE',
+        'E2E_UPDATE_WINNER',
+        '2020-05-05',
+        'E2E_UPDATE_PARTICIPANT_1',
+        'E2E_UPDATE_PARTICIPANT_2',
+      ],
+      'home-screen',
+    );
+  });
+
   it('Given I am at "Play Detail Screen" with data Play, When I press "Delete Button", And I press "Confirm Button", Then I am at "Home Screen", and I should not see data', async () => {
     await HomeScreen.iAmAtPlayDetailScreen$();
     await PlayDetailScreen.iPressDeleteButton$();
@@ -90,3 +121,31 @@ describe('App', () => {
     await HomeScreen.iShouldNotSeeData$('E2E_NEW_TITLE');
   });
 });
+
+const iFillForm$ = async (
+  values: {[key: string]: string},
+  screenId: string,
+) => {
+  Object.keys(values).forEach(async (key: string) => {
+    const value = values[key];
+    await element(by.id(key).withAncestor(by.id(screenId))).replaceText(value);
+  });
+};
+
+const iShouldSeeData$ = async (values: string[], screenId: string) => {
+  values.forEach(async (value: string) => {
+    await expect(
+      element(by.text(value).withAncestor(by.id(screenId))),
+    ).toBeVisible();
+  });
+};
+
+const iAmAtScreen$ = async (screenId: string) => {
+  await waitFor(element(by.id(screenId)))
+    .toBeVisible()
+    .withTimeout(10000);
+};
+
+const iPressButton$ = async (buttonId: string, screenId: string) => {
+  await element(by.id(buttonId).withAncestor(by.id(screenId))).tap();
+};

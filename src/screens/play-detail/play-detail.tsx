@@ -10,7 +10,7 @@ const PlayDetailScreen = () => {
 
   const {data, delete$} = usePlayDetailScreen(route?.params?.id);
 
-  const {goBack} = useNavigation();
+  const {navigate, goBack} = useNavigation();
 
   const onDelete = () => {
     Alert.alert('Confirm Delete', undefined, [
@@ -31,16 +31,23 @@ const PlayDetailScreen = () => {
     goBack();
   };
 
+  const onUpdate = async () => {
+    navigate('PlayUpdateScreen', {id: route?.params?.id, data});
+  };
+
   return (
     <View testID="play-detail-screen">
       <Text>{data?.title}</Text>
       <Text>{data?.winner}</Text>
       <Text>{data?.date}</Text>
-      {data?.participants.map((participant: string) => (
+      {data?.participants?.map((participant: string) => (
         <Text key={participant}>{participant}</Text>
       ))}
       <TouchableOpacity testID="play-delete-button" onPress={onDelete}>
         <Text>Delete</Text>
+      </TouchableOpacity>
+      <TouchableOpacity testID="play-update-button" onPress={onUpdate}>
+        <Text>Update</Text>
       </TouchableOpacity>
     </View>
   );

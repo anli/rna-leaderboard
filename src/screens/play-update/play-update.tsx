@@ -1,39 +1,42 @@
-// import {PlayForm} from './../../components';
 import {PlayForm} from '@components';
 import firestore from '@react-native-firebase/firestore';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 
-const PlayCreateScreen = () => {
-  const {values, onChangeText, create$} = usePlayCreateScreen();
+const PlayUpdateScreen = () => {
+  const route = useRoute<any>();
+  const formValues = {
+    title: route?.params?.data?.title,
+    winner: route?.params?.data?.winner,
+    date: route?.params?.data?.date,
+    participants: route?.params?.data?.participants,
+  };
+
+  const {values, onChangeText, update$} = usePlayUpdateScreen(
+    route?.params?.id,
+    formValues,
+  );
 
   const {goBack} = useNavigation();
 
   const onSave$ = async () => {
-    await create$(values);
+    await update$(values);
     goBack();
   };
 
   return (
-    <View testID="play-create-screen">
+    <View testID="play-update-screen">
       <PlayForm values={values} onChangeText={onChangeText} />
 
-      <TouchableOpacity testID="play-create-button" onPress={onSave$}>
+      <TouchableOpacity testID="play-update-button" onPress={onSave$}>
         <Text>Save</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
-export default PlayCreateScreen;
-
-const INITIAL_FORM_VALUES = {
-  title: '',
-  winner: '',
-  date: '',
-  participants: [],
-};
+export default PlayUpdateScreen;
 
 interface FormValues {
   title: string;
@@ -42,8 +45,8 @@ interface FormValues {
   participants: string[];
 }
 
-const usePlayCreateScreen = () => {
-  const [values, setValues] = useState<FormValues>(INITIAL_FORM_VALUES);
+const usePlayUpdateScreen = (id: string, initialValues: FormValues) => {
+  const [values, setValues] = useState<FormValues>(initialValues);
 
   const onChangeText: onChangeTextProps = (
     key: string,
@@ -60,13 +63,13 @@ const usePlayCreateScreen = () => {
     return setValues({...values, participants});
   };
 
-  const create$ = async (data: FormValues) => {
+  const update$ = async (data: FormValues) => {
     await firestore()
-      .collection('plays')
-      .add(data);
+      .doc(`plays/${id}`)
+      .update(data);
   };
 
-  return {values, onChangeText, create$};
+  return {values, onChangeText, update$};
 };
 
 type onChangeTextProps = (
