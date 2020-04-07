@@ -6,6 +6,22 @@ describe('App', () => {
     await device.reloadReactNative();
   });
 
+  it('Given I am a public user, And I am at "Login Screen", When I fill data, And I press "Login Button", Then I should see the Home Screen', async () => {
+    await iAmAtScreen$('login-screen');
+    await expect(element(by.id('login-screen'))).toBeVisible();
+
+    const data = {
+      'email-input': 'UAT_A@email.com',
+      'password-input': '123456',
+    };
+    await iFillForm$(data, 'login-screen');
+
+    await iPressButton$('login-button', 'login-screen');
+
+    await iAmAtScreen$('home-screen');
+    await expect(element(by.id('home-screen'))).toBeVisible();
+  });
+
   it('Given I am at "Home Screen", and I press "Create Play Button", and I fill form with data, When I press "Save Button", Then I should see data', async () => {
     const homeScreenId = by.id('home-screen');
     await waitFor(element(homeScreenId))
