@@ -79,8 +79,7 @@ const usePlayDetailScreen = (id: string) => {
         setData(mappedData);
       });
 
-    /* istanbul ignore next */
-    return () => unsubscribe();
+    return unsubscribe;
   }, [id]);
 
   return {data, delete$};

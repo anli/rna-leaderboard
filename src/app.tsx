@@ -1,14 +1,16 @@
-import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {
   HomeScreen,
   LoginScreen,
+  OnboardingScreen,
   PlayCreateScreen,
   PlayDetailScreen,
   PlayUpdateScreen,
   RegisterScreen,
 } from '@screens';
+import {useAuth} from '@utils';
 import React, {useEffect, useState} from 'react';
 import 'react-native-gesture-handler';
 
@@ -38,30 +40,72 @@ const UnauthenticatedStacks = () => (
   </Stack.Navigator>
 );
 
-const App = () => {
-  const {isAuthenticated} = useAuth();
+const OnboardingStacks = () => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name="OnboardingScreen"
+      component={OnboardingScreen}
+      options={{headerShown: false}}
+    />
+  </Stack.Navigator>
+);
 
-  return (
-    <NavigationContainer>
-      {isAuthenticated ? <AuthenticatedStacks /> : <UnauthenticatedStacks />}
-    </NavigationContainer>
-  );
+const App = () => {
+  const {isAuthenticated, user: authUser} = useAuth();
+
+  const {data: user} = useUser(authUser?.uid);
+
+  switch (true) {
+    case !isAuthenticated:
+      return (
+        <NavigationContainer>
+          <UnauthenticatedStacks />
+        </NavigationContainer>
+      );
+    case !(user && user.isOnboarded):
+      return (
+        <NavigationContainer>
+          <OnboardingStacks />
+        </NavigationContainer>
+      );
+    default:
+      return (
+        <NavigationContainer>
+          <AuthenticatedStacks />
+        </NavigationContainer>
+      );
+  }
 };
 export default App;
 
-const useAuth = () => {
-  const [user, setUser] = useState<any>(undefined);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+export interface User {
+  id: string;
+  name?: string;
+  isOnboarded: boolean;
+}
+
+const useUser = (id?: string) => {
+  const [data, setData] = useState<User | undefined>(undefined);
 
   useEffect(() => {
-    const onAuthStateChanged = (res: any) => {
-      setUser(res);
-      setIsAuthenticated(res ? true : false);
-    };
+    if (id) {
+      const unsubscribe = firestore()
+        .doc(`users/${id}`)
+        .onSnapshot(documentSnapshot => {
+          const mappedData: User = {
+            id: documentSnapshot.id,
+            name: documentSnapshot.data()?.name,
+            isOnboarded: documentSnapshot.data()?.isOnboarded || false,
+          };
 
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber;
-  }, []);
+          setData(mappedData);
+        });
 
-  return {user, isAuthenticated};
+      return unsubscribe;
+    } else {
+      setData(undefined);
+    }
+  }, [id]);
+
+  return {data};
 };

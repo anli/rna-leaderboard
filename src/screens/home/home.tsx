@@ -66,8 +66,7 @@ const useHomeScreen = () => {
         setData(mappedData);
       });
 
-    /* istanbul ignore next */
-    return () => unsubscribe();
+    return unsubscribe;
   }, []);
 
   return {data};
