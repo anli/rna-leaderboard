@@ -13,35 +13,35 @@ import 'react-native-gesture-handler';
 
 const Stack = createStackNavigator();
 
+const AuthenticatedStacks = () => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name="HomeScreen"
+      component={HomeScreen}
+      options={{headerShown: false}}
+    />
+    <Stack.Screen name="PlayCreateScreen" component={PlayCreateScreen} />
+    <Stack.Screen name="PlayDetailScreen" component={PlayDetailScreen} />
+    <Stack.Screen name="PlayUpdateScreen" component={PlayUpdateScreen} />
+  </Stack.Navigator>
+);
+
+const UnauthenticatedStacks = () => (
+  <Stack.Navigator>
+    <Stack.Screen
+      name="LoginScreen"
+      component={LoginScreen}
+      options={{headerShown: false}}
+    />
+  </Stack.Navigator>
+);
+
 const App = () => {
   const {isAuthenticated} = useAuth();
 
-  if (!isAuthenticated) {
-    return (
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="LoginScreen"
-            component={LoginScreen}
-            options={{headerShown: false}}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  }
-
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="HomeScreen"
-          component={HomeScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen name="PlayCreateScreen" component={PlayCreateScreen} />
-        <Stack.Screen name="PlayDetailScreen" component={PlayDetailScreen} />
-        <Stack.Screen name="PlayUpdateScreen" component={PlayUpdateScreen} />
-      </Stack.Navigator>
+      {isAuthenticated ? <AuthenticatedStacks /> : <UnauthenticatedStacks />}
     </NavigationContainer>
   );
 };
