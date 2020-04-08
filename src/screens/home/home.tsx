@@ -1,6 +1,10 @@
 import {Play} from '@models';
-import firestore from '@react-native-firebase/firestore';
+import firestore, {
+  FirebaseFirestoreTypes,
+} from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
+import {useAuth} from '@utils';
+import * as R from 'ramda';
 import React, {useEffect, useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 
@@ -20,19 +24,13 @@ const HomeScreen = () => {
     <>
       <View testID="home-screen">
         <Text>Test</Text>
-        {data?.map(({id, title, winner, date, participants}, index) => (
-          <View key={id}>
-            <TouchableOpacity
-              testID={`play-detail-button-${index}`}
-              onPress={() => onDetail(id)}>
-              <Text>{title}</Text>
-              <Text>{winner}</Text>
-              <Text>{date}</Text>
-              {participants?.map((participant: string) => (
-                <Text key={participant}>{participant}</Text>
-              ))}
-            </TouchableOpacity>
-          </View>
+        {data?.map((docRef, index) => (
+          <PlayItem
+            key={index}
+            docRef={docRef}
+            index={index}
+            onPress={onDetail}
+          />
         ))}
         <TouchableOpacity testID="play-create-button" onPress={onCreate}>
           <Text>Button</Text>
@@ -44,30 +42,92 @@ const HomeScreen = () => {
 
 export default HomeScreen;
 
-const useHomeScreen = () => {
-  const [data, setData] = useState<Play[] | undefined>(undefined);
+const PlayItem = ({
+  index,
+  docRef,
+  onPress,
+}: {
+  index: number;
+  docRef: FirebaseFirestoreTypes.DocumentReference;
+  onPress: (id: string) => any;
+}) => {
+  const {data} = useDocRef(docRef);
+
+  if (data) {
+    return (
+      <View>
+        <TouchableOpacity
+          testID={`play-detail-button-${index}`}
+          onPress={() => onPress(data.id)}>
+          <Text>{data?.title}</Text>
+          <Text>{data?.winner}</Text>
+          <Text>{data?.date}</Text>
+          {data?.participants?.map((participant: string) => (
+            <Text key={participant}>{participant}</Text>
+          ))}
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  return <Text>No Data</Text>;
+};
+
+const useDocRef = (docRef: FirebaseFirestoreTypes.DocumentReference) => {
+  const [data, setData] = useState<Play | undefined>(undefined);
 
   useEffect(() => {
-    const unsubscribe = firestore()
-      .collection('plays')
-      .onSnapshot(querySnapshot => {
-        const mappedData = querySnapshot.docs.map(documentSnapshot => {
-          const record: Play = {
-            title: documentSnapshot.data().title,
-            id: documentSnapshot.id,
-            winner: documentSnapshot.data().winner,
-            date: documentSnapshot.data().date,
-            participants: documentSnapshot.data().participants,
-          };
+    const unsubscribe = docRef.onSnapshot(docSnapshot => {
+      const record: Play = {
+        title: docSnapshot.data()?.title,
+        id: docSnapshot.id,
+        winner: docSnapshot.data()?.winner,
+        date: docSnapshot.data()?.date,
+        participants: docSnapshot.data()?.participants,
+      };
 
-          return record;
+      setData(record);
+    });
+    return unsubscribe;
+  }, [docRef]);
+
+  return {data};
+};
+
+const useHomeScreen = () => {
+  const [data, setData] = useState<
+    FirebaseFirestoreTypes.DocumentReference[] | undefined
+  >(undefined);
+  const {user} = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      console.log({path: `users/${user?.uid}`});
+      const unsubscribe = firestore()
+        .doc(`users/${user?.uid}`)
+        .onSnapshot(userSnapshot => {
+          const playRefs: FirebaseFirestoreTypes.DocumentReference[] = R.values(
+            userSnapshot?.data()?.plays,
+          );
+          // const mappedData = querySnapshot.docs.map(documentSnapshot => {
+          //   const record: Play = {
+          //     title: documentSnapshot.data().title,
+          //     id: documentSnapshot.id,
+          //     winner: documentSnapshot.data().winner,
+          //     date: documentSnapshot.data().date,
+          //     participants: documentSnapshot.data().participants,
+          //   };
+
+          //   return record;
+          // });
+
+          // const mappedData = undefined;
+          setData(playRefs);
         });
 
-        setData(mappedData);
-      });
-
-    return unsubscribe;
-  }, []);
+      return unsubscribe;
+    }
+  }, [user]);
 
   return {data};
 };

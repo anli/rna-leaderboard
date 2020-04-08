@@ -32,7 +32,15 @@ const PlayDetailScreen = () => {
   };
 
   const onUpdate = async () => {
-    navigate('PlayUpdateScreen', {id: route?.params?.id, data});
+    const updateData = {
+      title: data?.title,
+      id: data?.id,
+      winner: data?.winner,
+      date: data?.date,
+      participants: data?.participants,
+    };
+
+    navigate('PlayUpdateScreen', {id: route?.params?.id, data: updateData});
   };
 
   return (
@@ -59,9 +67,21 @@ const usePlayDetailScreen = (id: string) => {
   const [data, setData] = useState<Play | undefined>(undefined);
 
   const delete$ = async () => {
-    return firestore()
+    if (data && data.users) {
+      const userRefs = Object.keys(data.users);
+      userRefs.forEach((path: string) => {
+        firestore()
+          .doc(`users/${path}`)
+          .update({
+            [`plays.${id}`]: firestore.FieldValue.delete(),
+          });
+      });
+    }
+
+    await firestore()
       .doc(`plays/${id}`)
       .delete();
+    return;
   };
 
   useEffect(() => {
@@ -74,6 +94,7 @@ const usePlayDetailScreen = (id: string) => {
           winner: documentSnapshot.data()?.winner,
           date: documentSnapshot.data()?.date,
           participants: documentSnapshot.data()?.participants,
+          users: documentSnapshot.data()?.users,
         };
 
         setData(mappedData);

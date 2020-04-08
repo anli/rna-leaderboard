@@ -1,6 +1,7 @@
 import {PlayForm} from '@components';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
+import {useAuth} from '@utils';
 import React, {useState} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
 
@@ -43,6 +44,7 @@ interface FormValues {
 
 const usePlayCreateScreen = () => {
   const [values, setValues] = useState<FormValues>(INITIAL_FORM_VALUES);
+  const {user} = useAuth();
 
   const onChangeText: onChangeTextProps = (
     key: string,
@@ -60,9 +62,18 @@ const usePlayCreateScreen = () => {
   };
 
   const create$ = async (data: FormValues) => {
-    await firestore()
+    const userId = user?.uid || 'NULL';
+    const {id: playId} = await firestore()
       .collection('plays')
       .add(data);
+
+    await firestore()
+      .doc(`plays/${playId}`)
+      .update({users: {[userId]: firestore().doc(`users/${userId}`)}});
+
+    await firestore()
+      .doc(`users/${userId}`)
+      .update({[`plays.${playId}`]: firestore().doc(`plays/${playId}`)});
   };
 
   return {values, onChangeText, create$};
