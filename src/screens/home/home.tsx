@@ -102,26 +102,13 @@ const useHomeScreen = () => {
 
   useEffect(() => {
     if (user) {
-      console.log({path: `users/${user?.uid}`});
       const unsubscribe = firestore()
         .doc(`users/${user?.uid}`)
         .onSnapshot(userSnapshot => {
           const playRefs: FirebaseFirestoreTypes.DocumentReference[] = R.values(
             userSnapshot?.data()?.plays,
           );
-          // const mappedData = querySnapshot.docs.map(documentSnapshot => {
-          //   const record: Play = {
-          //     title: documentSnapshot.data().title,
-          //     id: documentSnapshot.id,
-          //     winner: documentSnapshot.data().winner,
-          //     date: documentSnapshot.data().date,
-          //     participants: documentSnapshot.data().participants,
-          //   };
 
-          //   return record;
-          // });
-
-          // const mappedData = undefined;
           setData(playRefs);
         });
 
