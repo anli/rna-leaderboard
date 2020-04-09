@@ -1,5 +1,6 @@
 import React from 'react';
-import {TextInput} from 'react-native';
+import {TextInput as PaperTextInput} from 'react-native-paper';
+import styled from 'styled-components/native';
 
 interface FormValues {
   email: string;
@@ -16,15 +17,19 @@ const UserForm = ({
   return (
     <>
       <TextInput
-        placeholder="Email"
+        keyboardType="email-address"
+        autoCompleteType="email"
+        placeholder="Email Address"
         testID="email-input"
-        onChangeText={data => onChangeText('email', data)}
+        onChangeText={(data: string) => onChangeText('email', data)}
         value={values.email}
       />
       <TextInput
+        secureTextEntry
+        autoCompleteType="password"
         placeholder="Password"
         testID="password-input"
-        onChangeText={data => onChangeText('password', data)}
+        onChangeText={(data: string) => onChangeText('password', data)}
         value={values.password}
       />
     </>
@@ -32,3 +37,10 @@ const UserForm = ({
 };
 
 export default UserForm;
+
+const TextInput = styled(PaperTextInput)`
+  background-color: transparent;
+  font-size: 18px;
+  padding-horizontal: 0px;
+  margin-bottom: 12px;
+`;

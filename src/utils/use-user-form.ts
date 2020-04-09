@@ -13,6 +13,7 @@ interface FormValues {
 
 const useUserForm = () => {
   const [values, setValues] = useState<FormValues>(INITIAL_FORM_VALUES);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const onChangeText: onChangeTextProps = (key: string, value: string) => {
     return setValues({...values, [key]: value});
@@ -30,17 +31,21 @@ const useUserForm = () => {
   };
 
   const login$ = async (email: string, password: string) => {
+    setIsLoading(true);
+
     try {
       await auth().signInWithEmailAndPassword(email, password);
+      setIsLoading(false);
       return {
         ok: true,
       };
     } catch (error) {
+      setIsLoading(false);
       return {ok: false, error: error.message};
     }
   };
 
-  return {values, onChangeText, register$, login$};
+  return {values, onChangeText, register$, login$, isLoading};
 };
 
 type onChangeTextProps = (key: string, value: string) => any;
