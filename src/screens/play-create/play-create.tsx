@@ -12,6 +12,7 @@ const PlayCreateScreen = () => {
 
   const onSave$ = async () => {
     await create$(values);
+    /* istanbul ignore next */
     goBack();
   };
 
@@ -62,18 +63,19 @@ const usePlayCreateScreen = () => {
   };
 
   const create$ = async (data: FormValues) => {
-    const userId = user?.uid || 'NULL';
     const {id: playId} = await firestore()
       .collection('plays')
       .add(data);
 
     await firestore()
       .doc(`plays/${playId}`)
-      .update({users: {[userId]: firestore().doc(`users/${userId}`)}});
+      .update({users: {[user.uid]: firestore().doc(`users/${user.uid}`)}});
 
-    await firestore()
-      .doc(`users/${userId}`)
-      .update({[`plays.${playId}`]: firestore().doc(`plays/${playId}`)});
+    return await firestore()
+      .doc(`users/${user.uid}`)
+      .update({
+        [`plays.${playId}`]: firestore().doc(`plays/${playId}`),
+      });
   };
 
   return {values, onChangeText, create$};

@@ -1,5 +1,7 @@
 import {Play} from '@models';
-import firestore from '@react-native-firebase/firestore';
+import firestore, {
+  FirebaseFirestoreTypes,
+} from '@react-native-firebase/firestore';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {Alert, Text, View} from 'react-native';
@@ -12,7 +14,10 @@ const PlayDetailScreen = () => {
 
   const {navigate, goBack} = useNavigation();
 
-  const onDelete = () => {
+  const onDelete = (
+    playId: string,
+    users: {[key: string]: FirebaseFirestoreTypes.DocumentReference},
+  ) => {
     Alert.alert('Confirm Delete', undefined, [
       {
         text: 'Cancel',
@@ -20,13 +25,17 @@ const PlayDetailScreen = () => {
       },
       {
         text: 'Confirm',
-        onPress: onDeleteConfirm$,
+        onPress: () => onDeleteConfirm$(playId, users),
       },
     ]);
   };
 
-  const onDeleteConfirm$ = async () => {
-    await delete$();
+  const onDeleteConfirm$ = async (
+    playId: string,
+    users: {[key: string]: FirebaseFirestoreTypes.DocumentReference},
+  ) => {
+    const userRefs = Object.keys(users);
+    await delete$(playId, userRefs);
     /* istanbul ignore next */
     goBack();
   };
@@ -43,20 +52,30 @@ const PlayDetailScreen = () => {
     navigate('PlayUpdateScreen', {id: route?.params?.id, data: updateData});
   };
 
+  if (data) {
+    return (
+      <View testID="play-detail-screen">
+        <Text>{data?.title}</Text>
+        <Text>{data?.winner}</Text>
+        <Text>{data?.date}</Text>
+        {data?.participants?.map((participant: string) => (
+          <Text key={participant}>{participant}</Text>
+        ))}
+        <TouchableOpacity
+          testID="play-delete-button"
+          onPress={() => onDelete(data.id, data.users)}>
+          <Text>Delete</Text>
+        </TouchableOpacity>
+        <TouchableOpacity testID="play-update-button" onPress={onUpdate}>
+          <Text>Update</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
   return (
-    <View testID="play-detail-screen">
-      <Text>{data?.title}</Text>
-      <Text>{data?.winner}</Text>
-      <Text>{data?.date}</Text>
-      {data?.participants?.map((participant: string) => (
-        <Text key={participant}>{participant}</Text>
-      ))}
-      <TouchableOpacity testID="play-delete-button" onPress={onDelete}>
-        <Text>Delete</Text>
-      </TouchableOpacity>
-      <TouchableOpacity testID="play-update-button" onPress={onUpdate}>
-        <Text>Update</Text>
-      </TouchableOpacity>
+    <View testID="play-detail-error-screen">
+      <Text>No Data Found</Text>
     </View>
   );
 };
@@ -66,22 +85,18 @@ export default PlayDetailScreen;
 const usePlayDetailScreen = (id: string) => {
   const [data, setData] = useState<Play | undefined>(undefined);
 
-  const delete$ = async () => {
-    if (data && data.users) {
-      const userRefs = Object.keys(data.users);
-      userRefs.forEach((path: string) => {
-        firestore()
-          .doc(`users/${path}`)
-          .update({
-            [`plays.${id}`]: firestore.FieldValue.delete(),
-          });
-      });
-    }
+  const delete$ = async (playId: string, userRefs: string[]) => {
+    userRefs.forEach(async (path: string) => {
+      await firestore()
+        .doc(`users/${path}`)
+        .update({
+          [`plays.${playId}`]: firestore.FieldValue.delete(),
+        });
+    });
 
-    await firestore()
-      .doc(`plays/${id}`)
+    return await firestore()
+      .doc(`plays/${playId}`)
       .delete();
-    return;
   };
 
   useEffect(() => {

@@ -5,5 +5,5 @@ export interface Play {
   winner: string;
   date: string;
   participants: string[];
-  users?: {[key: string]: FirebaseFirestoreTypes.DocumentReference};
+  users: {[key: string]: FirebaseFirestoreTypes.DocumentReference};
 }

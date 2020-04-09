@@ -17,6 +17,7 @@ const PLAYS = [
     winner: 'WINNER_B',
     date: '2020-04-02',
     participants: ['PARTICIPANT_B1', 'PARTICIPANT_B2'],
+    users: {USER_ID_B: true},
   },
 ];
 
@@ -79,7 +80,7 @@ const firestore = () => ({
       onSnapshot: (callback: any) => {
         callback({
           id: play?.id,
-          data: () => play,
+          data: () => ({...play, users: {USER_ID_A: true}}),
         });
         return () => jest.fn();
       },

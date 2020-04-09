@@ -101,19 +101,17 @@ const useHomeScreen = () => {
   const {user} = useAuth();
 
   useEffect(() => {
-    if (user) {
-      const unsubscribe = firestore()
-        .doc(`users/${user?.uid}`)
-        .onSnapshot(userSnapshot => {
-          const playRefs: FirebaseFirestoreTypes.DocumentReference[] = R.values(
-            userSnapshot?.data()?.plays,
-          );
+    const unsubscribe = firestore()
+      .doc(`users/${user.uid}`)
+      .onSnapshot(userSnapshot => {
+        const playRefs: FirebaseFirestoreTypes.DocumentReference[] = R.values(
+          userSnapshot?.data()?.plays,
+        );
 
-          setData(playRefs);
-        });
+        setData(playRefs);
+      });
 
-      return unsubscribe;
-    }
+    return unsubscribe;
   }, [user]);
 
   return {data};
