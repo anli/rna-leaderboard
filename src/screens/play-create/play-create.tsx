@@ -7,22 +7,32 @@ import {Text, TouchableOpacity, View} from 'react-native';
 
 const PlayCreateScreen = () => {
   const {values, onChangeText, create$} = usePlayCreateScreen();
-
+  const {user} = useAuth();
   const {goBack} = useNavigation();
 
-  const onSave$ = async () => {
-    await create$(values);
+  const onSave$ = async (saveValues: FormValues, userId) => {
+    await create$(saveValues, userId);
     /* istanbul ignore next */
     goBack();
   };
 
-  return (
-    <View testID="play-create-screen">
-      <PlayForm values={values} onChangeText={onChangeText} />
+  if (user) {
+    return (
+      <View testID="play-create-screen">
+        <PlayForm values={values} onChangeText={onChangeText} />
 
-      <TouchableOpacity testID="play-create-button" onPress={onSave$}>
-        <Text>Save</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          testID="play-create-button"
+          onPress={() => onSave$(values, user.uid)}>
+          <Text>Save</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  return (
+    <View testID="play-create-error-screen">
+      <Text>No User Found</Text>
     </View>
   );
 };
@@ -45,7 +55,6 @@ interface FormValues {
 
 const usePlayCreateScreen = () => {
   const [values, setValues] = useState<FormValues>(INITIAL_FORM_VALUES);
-  const {user} = useAuth();
 
   const onChangeText: onChangeTextProps = (
     key: string,
@@ -62,22 +71,6 @@ const usePlayCreateScreen = () => {
     return setValues({...values, participants});
   };
 
-  const create$ = async (data: FormValues) => {
-    const {id: playId} = await firestore()
-      .collection('plays')
-      .add(data);
-
-    await firestore()
-      .doc(`plays/${playId}`)
-      .update({users: {[user.uid]: firestore().doc(`users/${user.uid}`)}});
-
-    return await firestore()
-      .doc(`users/${user.uid}`)
-      .update({
-        [`plays.${playId}`]: firestore().doc(`plays/${playId}`),
-      });
-  };
-
   return {values, onChangeText, create$};
 };
 
@@ -86,3 +79,19 @@ type onChangeTextProps = (
   value: string,
   arrayProp?: 'participants',
 ) => any;
+
+const create$ = async (data: FormValues, userId: string) => {
+  const {id: playId} = await firestore()
+    .collection('plays')
+    .add(data);
+
+  await firestore()
+    .doc(`plays/${playId}`)
+    .update({users: {[userId]: firestore().doc(`users/${userId}`)}});
+
+  return await firestore()
+    .doc(`users/${userId}`)
+    .update({
+      [`plays.${playId}`]: firestore().doc(`plays/${playId}`),
+    });
+};

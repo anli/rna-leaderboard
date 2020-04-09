@@ -6,7 +6,7 @@ interface User {
 }
 
 const useAuth = () => {
-  const [user, setUser] = useState<User>({uid: 'NULL'});
+  const [user, setUser] = useState<User | undefined>(undefined);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {
