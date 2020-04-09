@@ -13,6 +13,7 @@ import {
 import {useAuth} from '@utils';
 import React, {useEffect, useState} from 'react';
 import 'react-native-gesture-handler';
+import {Provider as PaperProvider} from 'react-native-paper';
 
 const Stack = createStackNavigator();
 
@@ -76,7 +77,11 @@ const App = () => {
       );
   }
 };
-export default App;
+export default () => (
+  <PaperProvider>
+    <App />
+  </PaperProvider>
+);
 
 export interface User {
   id: string;
