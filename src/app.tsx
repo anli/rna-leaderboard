@@ -8,7 +8,6 @@ import {
   PlayCreateScreen,
   PlayDetailScreen,
   PlayUpdateScreen,
-  RegisterScreen,
 } from '@screens';
 import {useAuth} from '@utils';
 import React, {useEffect, useState} from 'react';
@@ -37,7 +36,6 @@ const UnauthenticatedStacks = () => (
       component={LoginScreen}
       options={{headerShown: false}}
     />
-    <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
   </Stack.Navigator>
 );
 

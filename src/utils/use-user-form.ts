@@ -1,23 +1,13 @@
 import auth from '@react-native-firebase/auth';
 import {useState} from 'react';
 
-const INITIAL_FORM_VALUES = {
-  email: '',
-  password: '',
-};
-
 interface FormValues {
   email: string;
   password: string;
 }
 
 const useUserForm = () => {
-  const [values, setValues] = useState<FormValues>(INITIAL_FORM_VALUES);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const onChangeText: onChangeTextProps = (key: string, value: string) => {
-    return setValues({...values, [key]: value});
-  };
 
   const register$ = async (email: string, password: string) => {
     try {
@@ -45,9 +35,7 @@ const useUserForm = () => {
     }
   };
 
-  return {values, onChangeText, register$, login$, isLoading};
+  return {register$, login$, isLoading};
 };
-
-type onChangeTextProps = (key: string, value: string) => any;
 
 export default useUserForm;

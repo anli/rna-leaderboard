@@ -8,16 +8,17 @@ describe('User Register', () => {
 
   it('Given I am user type "Public", and I am at "Login Screen", and I press "Register Button", and I am at "Register Screen, and I fill form with data, When I press "Register Button", Then I should see "Onboarding Screen"', async () => {
     await iAmAtScreen$('login-screen');
-    await expect(element(by.id('login-screen'))).toBeVisible();
-    await iPressButton$('register-button', 'login-screen');
+    await expect(element(by.id('register-tab-button'))).toBeVisible();
+    await element(by.id('register-tab-button')).tap();
 
-    await iAmAtScreen$('register-screen');
+    await expect(element(by.id('register-tab'))).toBeVisible();
     const data = {
       'email-input': 'E2E_NEW@email.com',
       'password-input': '123456',
+      'password-confirmation-input': '123456',
     };
-    await iFillForm$(data, 'register-screen');
-    await iPressButton$('register-button', 'register-screen');
+    await iFillForm$(data, 'register-tab');
+    await iPressButton$('register-button', 'register-tab');
 
     await iAmAtScreen$('onboarding-screen');
     await expect(element(by.id('onboarding-screen'))).toBeVisible();
