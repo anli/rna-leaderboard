@@ -6,4 +6,7 @@ module.exports = {
   env: {
     'jest/globals': true,
   },
+  rules: {
+    'no-console': 1,
+  },
 };

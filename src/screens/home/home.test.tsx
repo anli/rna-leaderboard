@@ -18,6 +18,7 @@ describe('Home Screen', () => {
     const {getByTestId} = render(<HomeScreen />);
 
     fireEvent.press(getByTestId('play-create-button'));
+
     expect(ReactNavigation.Native.mockNavigate).toBeCalledTimes(1);
     expect(ReactNavigation.Native.mockNavigate).toBeCalledWith(
       'PlayCreateScreen',

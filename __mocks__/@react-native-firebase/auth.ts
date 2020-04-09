@@ -3,7 +3,7 @@ const mockCreateUserWithEmailAndPassword = jest.fn(() => Promise.resolve({}));
 
 const auth = () => ({
   onAuthStateChanged: (callback: any) => {
-    callback(null);
+    callback({uid: 'USER_ID'});
     return () => jest.fn();
   },
   signInWithEmailAndPassword: mockSignInWithEmailAndPassword,

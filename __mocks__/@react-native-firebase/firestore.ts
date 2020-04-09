@@ -17,8 +17,26 @@ const PLAYS = [
     winner: 'WINNER_B',
     date: '2020-04-02',
     participants: ['PARTICIPANT_B1', 'PARTICIPANT_B2'],
+    users: {USER_ID_B: true},
   },
 ];
+
+const getMockUserPlays = () => {
+  return PLAYS.reduce((acc, play) => {
+    const value = {
+      [play.id]: {
+        onSnapshot: (callback: any) => {
+          callback({
+            id: play.id,
+            data: () => play,
+          });
+          return () => jest.fn();
+        },
+      },
+    };
+    return {...acc, ...value};
+  }, {});
+};
 
 const firestore = () => ({
   collection: () => ({
@@ -40,6 +58,19 @@ const firestore = () => ({
     add: mockAdd,
   }),
   doc: (path: string) => {
+    if (path === 'users/USER_ID') {
+      return {
+        set: mockSet,
+        onSnapshot: (callback: any) => {
+          callback({
+            data: () => ({
+              plays: getMockUserPlays(),
+            }),
+          });
+          return () => jest.fn();
+        },
+      };
+    }
     const play = PLAYS.find(({id}) => id === path.split('/')[1]);
 
     return {
@@ -49,7 +80,7 @@ const firestore = () => ({
       onSnapshot: (callback: any) => {
         callback({
           id: play?.id,
-          data: () => play,
+          data: () => ({...play, users: {USER_ID_A: true}}),
         });
         return () => jest.fn();
       },
