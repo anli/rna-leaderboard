@@ -1,4 +1,4 @@
-import {FormikProps, withFormik} from 'formik';
+import {FormikErrors, FormikProps, withFormik} from 'formik';
 import React from 'react';
 import {
   FAB,
@@ -36,40 +36,12 @@ const InnerForm = (props: UserFormProps & FormikProps<FormValues>) => {
   } = props;
   return (
     <>
-      <TextInput
-        keyboardType="email-address"
-        autoCompleteType="email"
-        placeholder="Email Address"
-        testID="email-input"
-        onChangeText={handleChange('email')}
-        value={values.email}
-        error={errors.email}
-        onBlur={handleBlur('email')}
+      <Inputs
+        handleChange={handleChange}
+        values={values}
+        errors={errors}
+        handleBlur={handleBlur}
       />
-      <HelperText type="error">{errors.email}</HelperText>
-      <TextInput
-        secureTextEntry
-        autoCompleteType="password"
-        placeholder="Password"
-        testID="password-input"
-        onChangeText={handleChange('password')}
-        value={values.password}
-        error={errors.password}
-        onBlur={handleBlur('password')}
-      />
-      <HelperText type="error">{errors.password}</HelperText>
-
-      <TextInput
-        secureTextEntry
-        autoCompleteType="password"
-        placeholder="Password again"
-        testID="password-confirmation-input"
-        onChangeText={handleChange('passwordConfirmation')}
-        value={values.passwordConfirmation}
-        error={errors.passwordConfirmation}
-        onBlur={handleBlur('passwordConfirmation')}
-      />
-      <HelperText type="error">{errors.passwordConfirmation}</HelperText>
 
       <SubmitButton
         disabled={isLoading}
@@ -119,3 +91,49 @@ const SubmitButton = styled(FAB)`
 const HelperText = styled(PaperHelperText)`
   padding-horizontal: 0px;
 `;
+
+interface InputsProps {
+  handleChange: (field: string) => any;
+  handleBlur: (field: string) => any;
+  values: FormValues;
+  errors: FormikErrors<FormValues>;
+}
+
+const Inputs = ({handleChange, values, errors, handleBlur}: InputsProps) => (
+  <>
+    <TextInput
+      keyboardType="email-address"
+      autoCompleteType="email"
+      placeholder="Email Address"
+      testID="email-input"
+      onChangeText={handleChange('email')}
+      value={values.email}
+      error={errors.email}
+      onBlur={handleBlur('email')}
+    />
+    <HelperText type="error">{errors.email}</HelperText>
+    <TextInput
+      secureTextEntry
+      autoCompleteType="password"
+      placeholder="Password"
+      testID="password-input"
+      onChangeText={handleChange('password')}
+      value={values.password}
+      error={errors.password}
+      onBlur={handleBlur('password')}
+    />
+    <HelperText type="error">{errors.password}</HelperText>
+
+    <TextInput
+      secureTextEntry
+      autoCompleteType="password"
+      placeholder="Password again"
+      testID="password-confirmation-input"
+      onChangeText={handleChange('passwordConfirmation')}
+      value={values.passwordConfirmation}
+      error={errors.passwordConfirmation}
+      onBlur={handleBlur('passwordConfirmation')}
+    />
+    <HelperText type="error">{errors.passwordConfirmation}</HelperText>
+  </>
+);
