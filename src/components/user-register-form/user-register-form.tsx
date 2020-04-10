@@ -1,5 +1,6 @@
 import {FormikErrors, FormikProps, withFormik} from 'formik';
 import React from 'react';
+import {View} from 'react-native';
 import {
   FAB,
   HelperText as PaperHelperText,
@@ -26,29 +27,22 @@ const validationSchema = Yup.object().shape({
 });
 
 const InnerForm = (props: UserFormProps & FormikProps<FormValues>) => {
-  const {
-    values,
-    handleChange,
-    isLoading,
-    handleSubmit,
-    errors,
-    handleBlur,
-  } = props;
   return (
     <>
       <Inputs
-        handleChange={handleChange}
-        values={values}
-        errors={errors}
-        handleBlur={handleBlur}
+        handleChange={props.handleChange}
+        values={props.values}
+        errors={props.errors}
+        handleBlur={props.handleBlur}
+        configs={InputConfigs}
       />
 
       <SubmitButton
-        disabled={isLoading}
-        loading={isLoading}
+        disabled={props.isLoading}
+        loading={props.isLoading}
         color="white"
         icon="arrow-right"
-        onPress={handleSubmit}
+        onPress={props.handleSubmit}
         testID="register-button"
       />
     </>
@@ -97,43 +91,59 @@ interface InputsProps {
   handleBlur: (field: string) => any;
   values: FormValues;
   errors: FormikErrors<FormValues>;
+  configs: ConfigProps[];
 }
 
-const Inputs = ({handleChange, values, errors, handleBlur}: InputsProps) => (
-  <>
-    <TextInput
-      keyboardType="email-address"
-      autoCompleteType="email"
-      placeholder="Email Address"
-      testID="email-input"
-      onChangeText={handleChange('email')}
-      value={values.email}
-      error={errors.email}
-      onBlur={handleBlur('email')}
-    />
-    <HelperText type="error">{errors.email}</HelperText>
-    <TextInput
-      secureTextEntry
-      autoCompleteType="password"
-      placeholder="Password"
-      testID="password-input"
-      onChangeText={handleChange('password')}
-      value={values.password}
-      error={errors.password}
-      onBlur={handleBlur('password')}
-    />
-    <HelperText type="error">{errors.password}</HelperText>
+interface ConfigProps {
+  key: 'email' | 'password' | 'passwordConfirmation';
+  placeholder?: string;
+  keyboardType?: string;
+  autoCompleteType?: string;
+  secureTextEntry?: boolean;
+  testID?: string;
+}
 
-    <TextInput
-      secureTextEntry
-      autoCompleteType="password"
-      placeholder="Password again"
-      testID="password-confirmation-input"
-      onChangeText={handleChange('passwordConfirmation')}
-      value={values.passwordConfirmation}
-      error={errors.passwordConfirmation}
-      onBlur={handleBlur('passwordConfirmation')}
-    />
-    <HelperText type="error">{errors.passwordConfirmation}</HelperText>
+const InputConfigs: ConfigProps[] = [
+  {
+    key: 'email',
+    placeholder: 'Email Address',
+    keyboardType: 'email-address',
+    autoCompleteType: 'email',
+    testID: 'email-input',
+  },
+  {
+    key: 'password',
+    placeholder: 'Password',
+    secureTextEntry: true,
+    testID: 'password-input',
+  },
+  {
+    key: 'passwordConfirmation',
+    placeholder: 'Password again',
+    secureTextEntry: true,
+    testID: 'password-confirmation-input',
+  },
+];
+
+const Inputs = ({
+  handleChange,
+  values,
+  errors,
+  handleBlur,
+  configs,
+}: InputsProps) => (
+  <>
+    {configs.map(({key, ...props}) => (
+      <View key={key}>
+        <TextInput
+          {...props}
+          onChangeText={handleChange(key)}
+          value={values[key]}
+          error={errors[key]}
+          onBlur={handleBlur(key)}
+        />
+        <HelperText type="error">{errors[key]}</HelperText>
+      </View>
+    ))}
   </>
 );
