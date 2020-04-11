@@ -6,28 +6,25 @@ import HideWithKeyboard from 'react-native-hide-with-keyboard';
 import styled from 'styled-components/native';
 
 const LoginScreen = () => {
-  const {
-    onLogin,
-    onRegister,
-    onShowLogin,
-    onShowRegister,
-    isLoginTab,
-    isRegisterTab,
-    isLoading,
-  } = useLoginScreen();
+  const props = useLoginScreen();
   return (
     <>
       <Screen testID="login-screen">
         <StatusBar backgroundColor="white" barStyle="dark-content" />
-        {isLoginTab && <LoginTab onLogin={onLogin} isLoading={isLoading} />}
-        {isRegisterTab && (
-          <RegisterTab onRegister={onRegister} isLoading={isLoading} />
+        {props.isLoginTab && (
+          <LoginTab onLogin={props.onLogin} isLoading={props.isLoading} />
+        )}
+        {props.isRegisterTab && (
+          <RegisterTab
+            onRegister={props.onRegister}
+            isLoading={props.isLoading}
+          />
         )}
         <Header
-          onShowLogin={onShowLogin}
-          isLoginTab={isLoginTab}
-          onShowRegister={onShowRegister}
-          isRegisterTab={isRegisterTab}
+          onShowLogin={props.onShowLogin}
+          isLoginTab={props.isLoginTab}
+          onShowRegister={props.onShowRegister}
+          isRegisterTab={props.isRegisterTab}
         />
       </Screen>
     </>
@@ -35,12 +32,19 @@ const LoginScreen = () => {
 };
 
 export default LoginScreen;
+type ProcessProps = ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) => any;
 
 const LoginTab = ({
   onLogin,
   isLoading,
 }: {
-  onLogin: ({email, password}: {email: string; password: string}) => any;
+  onLogin: ProcessProps;
   isLoading: boolean;
 }) => (
   <TabView testID="login-tab">
@@ -56,7 +60,7 @@ const RegisterTab = ({
   onRegister,
   isLoading,
 }: {
-  onRegister: ({email, password}: {email: string; password: string}) => any;
+  onRegister: ProcessProps;
   isLoading: boolean;
 }) => (
   <TabView testID="register-tab">
@@ -112,21 +116,23 @@ const useLoginScreen = () => {
   const {login$, isLoading, register$} = useUserForm();
   const {onShowLogin, onShowRegister, isLoginTab, isRegisterTab} = useTab();
 
-  const onLogin = async (values: {email: string; password: string}) => {
-    const result = await login$(values.email, values.password);
+  const action = (type: 'LOGIN' | 'REGISTER') => async (values: {
+    email: string;
+    password: string;
+  }) => {
+    const result =
+      type === 'LOGIN'
+        ? await login$(values.email, values.password)
+        : await register$(values.email, values.password);
 
     if (!result.ok && result.error) {
       Alert.alert('Error', result.error);
     }
   };
 
-  const onRegister = async (values: {email: string; password: string}) => {
-    const result = await register$(values.email, values.password);
+  const onLogin = action('LOGIN');
 
-    if (!result.ok && result.error) {
-      Alert.alert('Error', result.error);
-    }
-  };
+  const onRegister = action('REGISTER');
 
   return {
     onLogin,

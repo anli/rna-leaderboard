@@ -1,7 +1,6 @@
-import {TextInput} from '@utils';
+import {InputConfigProps, TextInput} from '@utils';
 import {FormikProps, withFormik} from 'formik';
 import React from 'react';
-import {KeyboardTypeOptions} from 'react-native';
 import {FAB} from 'react-native-paper';
 import styled from 'styled-components/native';
 import * as Yup from 'yup';
@@ -10,13 +9,6 @@ interface FormValues {
   email: string;
   password: string;
 }
-
-const validationSchema = Yup.object().shape({
-  email: Yup.string()
-    .required('Email is a required field')
-    .email('This must be a valid email address'),
-  password: Yup.string().required('Password is a required field'),
-});
 
 const InnerForm = (props: UserFormProps & FormikProps<FormValues>) => (
   <>
@@ -52,7 +44,12 @@ interface UserFormProps {
 }
 
 const UserForm = withFormik<UserFormProps, FormValues>({
-  validationSchema,
+  validationSchema: Yup.object().shape({
+    email: Yup.string()
+      .required('Email is a required field')
+      .email('This must be a valid email address'),
+    password: Yup.string().required('Password is a required field'),
+  }),
   handleSubmit: (values, formikBag) => {
     formikBag.props.onSubmit(values);
   },
@@ -72,13 +69,7 @@ const SubmitButton = styled(FAB)`
   align-items: center;
 `;
 
-const inputConfigs: {
-  key: keyof FormValues;
-  placeholder: string;
-  keyboardType?: KeyboardTypeOptions;
-  secureTextEntry?: boolean;
-  testID: string;
-}[] = [
+const inputConfigs: InputConfigProps<FormValues>[] = [
   {
     key: 'email',
     placeholder: 'Email Address',
