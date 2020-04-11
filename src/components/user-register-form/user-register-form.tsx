@@ -1,11 +1,8 @@
-import {FormikErrors, FormikProps, withFormik} from 'formik';
+import {TextInput} from '@utils';
+import {FormikProps, withFormik} from 'formik';
 import React from 'react';
-import {View} from 'react-native';
-import {
-  FAB,
-  HelperText as PaperHelperText,
-  TextInput as PaperTextInput,
-} from 'react-native-paper';
+import {KeyboardTypeOptions} from 'react-native';
+import {FAB} from 'react-native-paper';
 import styled from 'styled-components/native';
 import * as Yup from 'yup';
 
@@ -29,13 +26,21 @@ const validationSchema = Yup.object().shape({
 const InnerForm = (props: UserFormProps & FormikProps<FormValues>) => {
   return (
     <>
-      <Inputs
-        handleChange={props.handleChange}
-        values={props.values}
-        errors={props.errors}
-        handleBlur={props.handleBlur}
-        configs={InputConfigs}
-      />
+      {inputConfigs.map(
+        ({key, placeholder, keyboardType, secureTextEntry = false, testID}) => (
+          <TextInput
+            key={key}
+            placeholder={placeholder}
+            keyboardType={keyboardType}
+            secureTextEntry={secureTextEntry}
+            testID={testID}
+            onChangeText={props.handleChange(key)}
+            value={props.values[key]}
+            error={props.errors[key]}
+            onBlur={props.handleBlur(key)}
+          />
+        ),
+      )}
 
       <SubmitButton
         disabled={props.isLoading}
@@ -63,12 +68,6 @@ const UserForm = withFormik<UserFormProps, FormValues>({
 
 export default UserForm;
 
-const TextInput = styled(PaperTextInput)`
-  background-color: transparent;
-  font-size: 18px;
-  padding-horizontal: 0px;
-`;
-
 const SubmitButton = styled(FAB)`
   position: absolute;
   bottom: 0px;
@@ -82,33 +81,17 @@ const SubmitButton = styled(FAB)`
   background-color: pink;
 `;
 
-const HelperText = styled(PaperHelperText)`
-  padding-horizontal: 0px;
-`;
-
-interface InputsProps {
-  handleChange: (field: string) => any;
-  handleBlur: (field: string) => any;
-  values: FormValues;
-  errors: FormikErrors<FormValues>;
-  configs: ConfigProps[];
-}
-
-interface ConfigProps {
-  key: 'email' | 'password' | 'passwordConfirmation';
-  placeholder?: string;
-  keyboardType?: string;
-  autoCompleteType?: string;
+const inputConfigs: {
+  key: keyof FormValues;
+  placeholder: string;
+  keyboardType?: KeyboardTypeOptions;
   secureTextEntry?: boolean;
-  testID?: string;
-}
-
-const InputConfigs: ConfigProps[] = [
+  testID: string;
+}[] = [
   {
     key: 'email',
     placeholder: 'Email Address',
     keyboardType: 'email-address',
-    autoCompleteType: 'email',
     testID: 'email-input',
   },
   {
@@ -124,26 +107,3 @@ const InputConfigs: ConfigProps[] = [
     testID: 'password-confirmation-input',
   },
 ];
-
-const Inputs = ({
-  handleChange,
-  values,
-  errors,
-  handleBlur,
-  configs,
-}: InputsProps) => (
-  <>
-    {configs.map(({key, ...props}) => (
-      <View key={key}>
-        <TextInput
-          {...props}
-          onChangeText={handleChange(key)}
-          value={values[key]}
-          error={errors[key]}
-          onBlur={handleBlur(key)}
-        />
-        <HelperText type="error">{errors[key]}</HelperText>
-      </View>
-    ))}
-  </>
-);

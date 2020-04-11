@@ -1,10 +1,8 @@
+import {TextInput} from '@utils';
 import {FormikProps, withFormik} from 'formik';
 import React from 'react';
-import {
-  FAB,
-  HelperText as PaperHelperText,
-  TextInput as PaperTextInput,
-} from 'react-native-paper';
+import {KeyboardTypeOptions} from 'react-native';
+import {FAB} from 'react-native-paper';
 import styled from 'styled-components/native';
 import * as Yup from 'yup';
 
@@ -21,45 +19,30 @@ const validationSchema = Yup.object().shape({
 });
 
 const InnerForm = (props: UserFormProps & FormikProps<FormValues>) => {
-  const {
-    values,
-    handleChange,
-    isLoading,
-    handleSubmit,
-    errors,
-    handleBlur,
-  } = props;
   return (
     <>
-      <TextInput
-        keyboardType="email-address"
-        autoCompleteType="email"
-        placeholder="Email Address"
-        testID="email-input"
-        onChangeText={handleChange('email')}
-        value={values.email}
-        error={errors.email}
-        onBlur={handleBlur('email')}
-      />
-      <HelperText type="error">{errors.email}</HelperText>
-      <TextInput
-        secureTextEntry
-        autoCompleteType="password"
-        placeholder="Password"
-        testID="password-input"
-        onChangeText={handleChange('password')}
-        value={values.password}
-        error={errors.password}
-        onBlur={handleBlur('password')}
-      />
-      <HelperText type="error">{errors.password}</HelperText>
+      {inputConfigs.map(
+        ({key, placeholder, keyboardType, secureTextEntry = false, testID}) => (
+          <TextInput
+            key={key}
+            placeholder={placeholder}
+            keyboardType={keyboardType}
+            secureTextEntry={secureTextEntry}
+            testID={testID}
+            onChangeText={props.handleChange(key)}
+            value={props.values[key]}
+            error={props.errors[key]}
+            onBlur={props.handleBlur(key)}
+          />
+        ),
+      )}
 
       <SubmitButton
-        disabled={isLoading}
-        loading={isLoading}
+        disabled={props.isLoading}
+        loading={props.isLoading}
         color="white"
         icon="arrow-right"
-        onPress={handleSubmit}
+        onPress={props.handleSubmit}
         testID="login-button"
       />
     </>
@@ -80,12 +63,6 @@ const UserForm = withFormik<UserFormProps, FormValues>({
 
 export default UserForm;
 
-const TextInput = styled(PaperTextInput)`
-  background-color: transparent;
-  font-size: 18px;
-  padding-horizontal: 0px;
-`;
-
 const SubmitButton = styled(FAB)`
   position: absolute;
   bottom: 0px;
@@ -98,6 +75,23 @@ const SubmitButton = styled(FAB)`
   align-items: center;
 `;
 
-const HelperText = styled(PaperHelperText)`
-  padding-horizontal: 0px;
-`;
+const inputConfigs: {
+  key: keyof FormValues;
+  placeholder: string;
+  keyboardType?: KeyboardTypeOptions;
+  secureTextEntry?: boolean;
+  testID: string;
+}[] = [
+  {
+    key: 'email',
+    placeholder: 'Email Address',
+    keyboardType: 'email-address',
+    testID: 'email-input',
+  },
+  {
+    key: 'password',
+    placeholder: 'Password',
+    secureTextEntry: true,
+    testID: 'password-input',
+  },
+];
