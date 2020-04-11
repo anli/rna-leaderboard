@@ -116,23 +116,9 @@ const useLoginScreen = () => {
   const {login$, isLoading, register$} = useUserForm();
   const {onShowLogin, onShowRegister, isLoginTab, isRegisterTab} = useTab();
 
-  const action = (type: 'LOGIN' | 'REGISTER') => async (values: {
-    email: string;
-    password: string;
-  }) => {
-    const result =
-      type === 'LOGIN'
-        ? await login$(values.email, values.password)
-        : await register$(values.email, values.password);
+  const onLogin = action('LOGIN', login$, register$);
 
-    if (!result.ok && result.error) {
-      Alert.alert('Error', result.error);
-    }
-  };
-
-  const onLogin = action('LOGIN');
-
-  const onRegister = action('REGISTER');
+  const onRegister = action('REGISTER', login$, register$);
 
   return {
     onLogin,
@@ -201,3 +187,18 @@ const StrongText = styled.Text`
 const SubtitleText = styled.Text`
   font-size: 18px;
 `;
+
+const action = (
+  type: 'LOGIN' | 'REGISTER',
+  login$,
+  register$,
+) => async (values: {email: string; password: string}) => {
+  const result =
+    type === 'LOGIN'
+      ? await login$(values.email, values.password)
+      : await register$(values.email, values.password);
+
+  if (!result.ok && result.error) {
+    Alert.alert('Error', result.error);
+  }
+};
