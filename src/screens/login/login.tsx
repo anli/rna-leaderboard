@@ -7,7 +7,7 @@ import styled from 'styled-components/native';
 
 const LoginScreen = () => {
   const {login$, isLoading, register$} = useUserForm();
-  const [tab, setTab] = useState<'LOGIN' | 'REGISTER'>('LOGIN');
+  const {onShowLogin, onShowRegister, isLoginTab, isRegisterTab} = useTab();
 
   const onLogin = async (values: {email: string; password: string}) => {
     const result = await login$(values.email, values.password);
@@ -24,11 +24,6 @@ const LoginScreen = () => {
       Alert.alert('Error', result.error);
     }
   };
-
-  const onShowLogin = () => setTab('LOGIN');
-  const onShowRegister = () => setTab('REGISTER');
-  const isLoginTab = tab === 'LOGIN';
-  const isRegisterTab = tab === 'REGISTER';
 
   return (
     <>
@@ -74,6 +69,17 @@ const LoginScreen = () => {
 };
 
 export default LoginScreen;
+
+const useTab = () => {
+  const [tab, setTab] = useState<'LOGIN' | 'REGISTER'>('LOGIN');
+
+  const onShowLogin = () => setTab('LOGIN');
+  const onShowRegister = () => setTab('REGISTER');
+  const isLoginTab = tab === 'LOGIN';
+  const isRegisterTab = tab === 'REGISTER';
+
+  return {onShowLogin, onShowRegister, isLoginTab, isRegisterTab};
+};
 
 const TitleText = styled.Text`
   font-size: 36px;
