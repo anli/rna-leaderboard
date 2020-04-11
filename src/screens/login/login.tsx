@@ -6,6 +6,109 @@ import HideWithKeyboard from 'react-native-hide-with-keyboard';
 import styled from 'styled-components/native';
 
 const LoginScreen = () => {
+  const {
+    onLogin,
+    onRegister,
+    onShowLogin,
+    onShowRegister,
+    isLoginTab,
+    isRegisterTab,
+    isLoading,
+  } = useLoginScreen();
+  return (
+    <>
+      <Screen testID="login-screen">
+        <StatusBar backgroundColor="white" barStyle="dark-content" />
+        {isLoginTab && <LoginTab onLogin={onLogin} isLoading={isLoading} />}
+        {isRegisterTab && (
+          <RegisterTab onRegister={onRegister} isLoading={isLoading} />
+        )}
+        <Header
+          onShowLogin={onShowLogin}
+          isLoginTab={isLoginTab}
+          onShowRegister={onShowRegister}
+          isRegisterTab={isRegisterTab}
+        />
+      </Screen>
+    </>
+  );
+};
+
+export default LoginScreen;
+
+const LoginTab = ({
+  onLogin,
+  isLoading,
+}: {
+  onLogin: ({email, password}: {email: string; password: string}) => any;
+  isLoading: boolean;
+}) => (
+  <TabView testID="login-tab">
+    <GreetingView>
+      <TitleText>Welcome back,</TitleText>
+    </GreetingView>
+
+    <UserLoginForm onSubmit={onLogin} isLoading={isLoading} />
+  </TabView>
+);
+
+const RegisterTab = ({
+  onRegister,
+  isLoading,
+}: {
+  onRegister: ({email, password}: {email: string; password: string}) => any;
+  isLoading: boolean;
+}) => (
+  <TabView testID="register-tab">
+    <GreetingView>
+      <TitleText>
+        Hello <StrongText>Beautiful,</StrongText>
+      </TitleText>
+      <SubtitleText>
+        Enter your information below{'\n'}
+        or login with a social account
+      </SubtitleText>
+    </GreetingView>
+
+    <UserRegisterForm onSubmit={onRegister} isLoading={isLoading} />
+  </TabView>
+);
+
+const Header = ({
+  onShowLogin,
+  isLoginTab,
+  onShowRegister,
+  isRegisterTab,
+}: {
+  onShowLogin: () => any;
+  isLoginTab: boolean;
+  onShowRegister: () => any;
+  isRegisterTab: boolean;
+}) => (
+  <HeaderView>
+    <ButtonsView>
+      <TabButton onPress={onShowLogin} testID="login-tab-button">
+        <TabButtonText focused={isLoginTab}>Sign In</TabButtonText>
+      </TabButton>
+      <TabButton onPress={onShowRegister} testID="register-tab-button">
+        <TabButtonText focused={isRegisterTab}>Sign Up</TabButtonText>
+      </TabButton>
+    </ButtonsView>
+  </HeaderView>
+);
+
+const useTab = () => {
+  const [tab, setTab] = useState<'LOGIN' | 'REGISTER'>('LOGIN');
+
+  const onShowLogin = () => setTab('LOGIN');
+  const onShowRegister = () => setTab('REGISTER');
+  const isLoginTab = tab === 'LOGIN';
+  const isRegisterTab = tab === 'REGISTER';
+
+  return {onShowLogin, onShowRegister, isLoginTab, isRegisterTab};
+};
+
+const useLoginScreen = () => {
   const {login$, isLoading, register$} = useUserForm();
   const {onShowLogin, onShowRegister, isLoginTab, isRegisterTab} = useTab();
 
@@ -25,60 +128,15 @@ const LoginScreen = () => {
     }
   };
 
-  return (
-    <>
-      <Screen testID="login-screen">
-        <StatusBar backgroundColor="white" barStyle="dark-content" />
-        {isLoginTab && (
-          <TabView testID="login-tab">
-            <GreetingView>
-              <TitleText>Welcome back,</TitleText>
-            </GreetingView>
-
-            <UserLoginForm onSubmit={onLogin} isLoading={isLoading} />
-          </TabView>
-        )}
-        {isRegisterTab && (
-          <TabView testID="register-tab">
-            <GreetingView>
-              <TitleText>
-                Hello <StrongText>Beautiful,</StrongText>
-              </TitleText>
-              <SubtitleText>
-                Enter your information below{'\n'}
-                or login with a social account
-              </SubtitleText>
-            </GreetingView>
-
-            <UserRegisterForm onSubmit={onRegister} isLoading={isLoading} />
-          </TabView>
-        )}
-        <HeaderView>
-          <ButtonsView>
-            <TabButton onPress={onShowLogin} testID="login-tab-button">
-              <TabButtonText focused={isLoginTab}>Sign In</TabButtonText>
-            </TabButton>
-            <TabButton onPress={onShowRegister} testID="register-tab-button">
-              <TabButtonText focused={isRegisterTab}>Sign Up</TabButtonText>
-            </TabButton>
-          </ButtonsView>
-        </HeaderView>
-      </Screen>
-    </>
-  );
-};
-
-export default LoginScreen;
-
-const useTab = () => {
-  const [tab, setTab] = useState<'LOGIN' | 'REGISTER'>('LOGIN');
-
-  const onShowLogin = () => setTab('LOGIN');
-  const onShowRegister = () => setTab('REGISTER');
-  const isLoginTab = tab === 'LOGIN';
-  const isRegisterTab = tab === 'REGISTER';
-
-  return {onShowLogin, onShowRegister, isLoginTab, isRegisterTab};
+  return {
+    onLogin,
+    onRegister,
+    onShowLogin,
+    onShowRegister,
+    isLoginTab,
+    isRegisterTab,
+    isLoading,
+  };
 };
 
 const TitleText = styled.Text`
