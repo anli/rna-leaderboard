@@ -23,36 +23,33 @@ const validationSchema = Yup.object().shape({
   ),
 });
 
-const InnerForm = (props: UserFormProps & FormikProps<FormValues>) => {
-  return (
-    <>
-      {inputConfigs.map(
-        ({key, placeholder, keyboardType, secureTextEntry = false, testID}) => (
-          <TextInput
-            key={key}
-            placeholder={placeholder}
-            keyboardType={keyboardType}
-            secureTextEntry={secureTextEntry}
-            testID={testID}
-            onChangeText={props.handleChange(key)}
-            value={props.values[key]}
-            error={props.errors[key]}
-            onBlur={props.handleBlur(key)}
-          />
-        ),
-      )}
-
-      <SubmitButton
-        disabled={props.isLoading}
-        loading={props.isLoading}
-        color="white"
-        icon="arrow-right"
-        onPress={props.handleSubmit}
-        testID="register-button"
-      />
-    </>
-  );
-};
+const InnerForm = (props: UserFormProps & FormikProps<FormValues>) => (
+  <>
+    {inputConfigs.map(
+      ({key, placeholder, keyboardType, secureTextEntry = false, testID}) => (
+        <TextInput
+          key={key}
+          placeholder={placeholder}
+          keyboardType={keyboardType}
+          secureTextEntry={secureTextEntry}
+          testID={testID}
+          onChangeText={props.handleChange(key)}
+          value={props.values[key]}
+          error={props.errors[key]}
+          onBlur={props.handleBlur(key)}
+        />
+      ),
+    )}
+    <SubmitButton
+      disabled={props.isLoading}
+      loading={props.isLoading}
+      color="white"
+      icon="arrow-right"
+      onPress={props.handleSubmit}
+      testID="register-button"
+    />
+  </>
+);
 
 interface UserFormProps {
   onSubmit: (values: FormValues) => any;
