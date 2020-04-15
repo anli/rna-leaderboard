@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "cq": "codeclimate analyze",
     "ci:pr": "npm ci && npm run lint && npm run test",
     "ci:tag": "npm ci && npm run e2e:ci",
     "e2e:ci": "detox build -c android.emu.release && detox test -c android.emu.release",
