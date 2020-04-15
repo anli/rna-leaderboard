@@ -1,5 +1,6 @@
 import React from 'react';
-import {StatusBar, Text} from 'react-native';
+import {StatusBar} from 'react-native';
+import {Chip as PaperChip} from 'react-native-paper';
 import styled from 'styled-components/native';
 
 const LeaderboardScreenComponent = () => {
@@ -7,7 +8,7 @@ const LeaderboardScreenComponent = () => {
     <>
       <StatusBar backgroundColor="white" barStyle="dark-content" />
       <Screen>
-        <Text>LeaderboardScreen</Text>
+        <Chips data={filters} selected={selectedFilter} />
       </Screen>
     </>
   );
@@ -23,4 +24,26 @@ export default class {
 const Screen = styled.View`
   flex: 1;
   background-color: white;
+  padding: 16px 16px 16px 16px;
 `;
+
+const ChipsContainer = styled.View`
+  flex-direction: row;
+`;
+
+const Chip = styled(PaperChip)`
+  margin-right: 8px;
+`;
+
+const filters: string[] = ['Scythe', 'Agricola', 'Clank!'];
+const selectedFilter = 'Scythe';
+
+const Chips = ({data, selected}: {data: string[]; selected: string}) => (
+  <ChipsContainer>
+    {data.map(record => (
+      <Chip key={record} selected={record === selected}>
+        {record}
+      </Chip>
+    ))}
+  </ChipsContainer>
+);

@@ -23,4 +23,11 @@ describe('Leaderboard Screen', () => {
     const component = render(<Screen />);
     expect(component.getByText('Leaderboard')).toBeDefined();
   });
+
+  it('Given any, When I am at "Leaderboard Screen", Then I should see "Filters"', () => {
+    const component = render(<Screen />);
+    expect(component.getByText('Scythe')).toBeDefined();
+    expect(component.getByText('Agricola')).toBeDefined();
+    expect(component.getByText('Clank!')).toBeDefined();
+  });
 });
