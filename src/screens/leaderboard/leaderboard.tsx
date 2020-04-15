@@ -1,12 +1,26 @@
 import React from 'react';
-import {Text, View} from 'react-native';
+import {StatusBar, Text} from 'react-native';
+import styled from 'styled-components/native';
 
-const LeaderboardScreen = () => {
+const LeaderboardScreenComponent = () => {
   return (
-    <View>
-      <Text>LeaderboardScreen</Text>
-    </View>
+    <>
+      <StatusBar backgroundColor="white" barStyle="dark-content" />
+      <Screen>
+        <Text>LeaderboardScreen</Text>
+      </Screen>
+    </>
   );
 };
 
-export default LeaderboardScreen;
+const LeaderboardScreenOptions = {title: 'Leaderboard'};
+
+export default class {
+  static Component = LeaderboardScreenComponent;
+  static Options = LeaderboardScreenOptions;
+}
+
+const Screen = styled.View`
+  flex: 1;
+  background-color: white;
+`;

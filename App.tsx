@@ -12,8 +12,8 @@ const App = () => {
       <Stack.Navigator>
         <Stack.Screen
           name="LeaderboardScreen"
-          component={LeaderboardScreen}
-          options={{headerShown: false}}
+          component={LeaderboardScreen.Component}
+          options={LeaderboardScreen.Options}
         />
       </Stack.Navigator>
     </NavigationContainer>
