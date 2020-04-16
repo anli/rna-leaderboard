@@ -1,6 +1,6 @@
 import React from 'react';
-import {StatusBar} from 'react-native';
-import {Chip as PaperChip} from 'react-native-paper';
+import {FlatList, StatusBar} from 'react-native';
+import {Chip as PaperChip, Headline, List} from 'react-native-paper';
 import styled from 'styled-components/native';
 
 const LeaderboardScreenComponent = () => {
@@ -9,6 +9,17 @@ const LeaderboardScreenComponent = () => {
       <StatusBar backgroundColor="white" barStyle="dark-content" />
       <Screen>
         <Chips data={filters} selected={selectedFilter} />
+        <FlatList
+          data={playerRanks}
+          renderItem={({item}) => (
+            <List.Item
+              title={item?.name}
+              description={`${item?.winCount} Wins ${item?.lossCount} Losses`}
+              left={() => <Rank rank={item?.rank} />}
+            />
+          )}
+          keyExtractor={item => String(item.rank)}
+        />
       </Screen>
     </>
   );
@@ -47,3 +58,21 @@ const Chips = ({data, selected}: {data: string[]; selected: string}) => (
     ))}
   </ChipsContainer>
 );
+
+const playerRanks = [
+  {rank: 1, name: 'John', winCount: 40, lossCount: 10},
+  {rank: 2, name: 'Mary', winCount: 10, lossCount: 2},
+  {rank: 3, name: 'Jane', winCount: 50, lossCount: 20},
+];
+
+const Rank = ({rank}: {rank: number}) => {
+  return (
+    <RankContainer>
+      <Headline>{rank}</Headline>
+    </RankContainer>
+  );
+};
+
+const RankContainer = styled.View`
+  padding-right: 8px;
+`;
