@@ -1,16 +1,34 @@
 import React from 'react';
 import {FlatList, StatusBar} from 'react-native';
 import {Chip as PaperChip, Headline, List} from 'react-native-paper';
+import {useSelector} from 'react-redux';
 import styled from 'styled-components/native';
 
+interface State {
+  gameNames: string[];
+  gameRank: {
+    [key: string]: {
+      rank: number;
+      name: string;
+      winCount: number;
+      lossCount: number;
+    }[];
+  };
+}
+
 const LeaderboardScreenComponent = () => {
+  const data = useSelector((state: State) => state);
+  const selectedFilter = 'Scythe';
+  const filters = data.gameNames;
+  const ranks = data.gameRank[selectedFilter];
+
   return (
     <>
       <StatusBar backgroundColor="white" barStyle="dark-content" />
       <Screen>
         <Chips data={filters} selected={selectedFilter} />
         <FlatList
-          data={playerRanks}
+          data={ranks}
           renderItem={({item}) => (
             <List.Item
               title={item?.name}
@@ -46,9 +64,6 @@ const Chip = styled(PaperChip)`
   margin-right: 8px;
 `;
 
-const filters: string[] = ['Scythe', 'Agricola', 'Clank!'];
-const selectedFilter = 'Scythe';
-
 const Chips = ({data, selected}: {data: string[]; selected: string}) => (
   <ChipsContainer>
     {data.map(record => (
@@ -58,12 +73,6 @@ const Chips = ({data, selected}: {data: string[]; selected: string}) => (
     ))}
   </ChipsContainer>
 );
-
-const playerRanks = [
-  {rank: 1, name: 'John', winCount: 40, lossCount: 10},
-  {rank: 2, name: 'Mary', winCount: 10, lossCount: 2},
-  {rank: 3, name: 'Jane', winCount: 50, lossCount: 20},
-];
 
 const Rank = ({rank}: {rank: number}) => {
   return (

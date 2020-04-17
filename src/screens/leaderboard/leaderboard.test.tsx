@@ -1,21 +1,30 @@
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import {configureStore} from '@reduxjs/toolkit';
+import {LeaderboardSlice} from '@store';
 import React from 'react';
 import 'react-native';
 import {render} from 'react-native-testing-library';
+import {Provider as StoreProvider} from 'react-redux';
 import LeaderboardScreen from './leaderboard';
+
+const store = configureStore({
+  reducer: LeaderboardSlice.reducer,
+});
 
 const Stack = createStackNavigator();
 const Screen = () => (
-  <NavigationContainer>
-    <Stack.Navigator>
-      <Stack.Screen
-        name="LeaderboardScreen"
-        component={LeaderboardScreen.Component}
-        options={LeaderboardScreen.Options}
-      />
-    </Stack.Navigator>
-  </NavigationContainer>
+  <StoreProvider store={store}>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="LeaderboardScreen"
+          component={LeaderboardScreen.Component}
+          options={LeaderboardScreen.Options}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  </StoreProvider>
 );
 
 describe('Leaderboard Screen', () => {
