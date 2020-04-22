@@ -1,71 +1,35 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
+import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
+import {NavigationContainer} from '@react-navigation/native';
+import {HomeScreen} from '@screens';
 import React from 'react';
-import {SafeAreaView, ScrollView, StatusBar, StyleSheet} from 'react-native';
-import {Colors, Header} from 'react-native/Libraries/NewAppScreen';
+import 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-declare var global: {HermesInternal: null | {}};
-
-const App = () => {
+const WHITE_BACKGROUND_STYLE = {backgroundColor: '#fff'};
+const Tab = createMaterialBottomTabNavigator();
+const Tabs = () => {
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-        </ScrollView>
-      </SafeAreaView>
-    </>
+    <Tab.Navigator
+      initialRouteName="HomeTab"
+      labeled={false}
+      activeColor="#000"
+      barStyle={WHITE_BACKGROUND_STYLE}>
+      <Tab.Screen
+        options={{
+          tabBarIcon: ({color}) => <Icon name="poll" color={color} size={24} />,
+        }}
+        name="HomeTab"
+        component={HomeScreen}
+      />
+    </Tab.Navigator>
   );
 };
 
-const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
-});
-
+const App = () => {
+  return (
+    <NavigationContainer>
+      <Tabs />
+    </NavigationContainer>
+  );
+};
 export default App;
