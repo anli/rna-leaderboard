@@ -3,13 +3,14 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "ci:test": "npm ci && npm run lint && npm run test",
     "ci:e2e": "detox build -c android.emu.release && detox test -c android.emu.release",
     "e2e": "detox build -c android.emu.debug && detox test -c android.emu.debug",
     "reset": "watchman watch-del-all && npm start --reset-cache",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "test": "jest",
+    "test": "jest --coverage",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
   },
   "dependencies": {
@@ -37,6 +38,13 @@
     "typescript": "^3.7.3"
   },
   "jest": {
+    "coverageThreshold": {
+      "global": {
+        "branches": 100,
+        "functions": 100,
+        "lines": 100
+      }
+    },
     "testPathIgnorePatterns": [
       "<rootDir>/node_modules/",
       "<rootDir>/e2e/"
